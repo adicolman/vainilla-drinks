@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+@theme {
+  /* Brand palette */
+  --color-brand-950: #021024;
+  --color-brand-900: #052659;
+  --color-brand-600: #5483B3;
+  --color-brand-400: #7DA0CA;
+  --color-brand-100: #C1E8FF;
+  --color-brand-50: #F4F8FC;
+
+  /* Warm neutrals — editorial base */
+  --color-sand-50: #FDFCFA;
+  --color-sand-100: #F8F6F1;
+  --color-sand-200: #EDE8DF;
+  --color-sand-300: #D6CEBF;
+  --color-sand-400: #B0A694;
+
+  /* Vanilla — brand identity accent (editorial only) */
+  --color-vanilla: #F5E6C8;
+  --color-vanilla-soft: #FBF5EC;
+  --color-vanilla-deep: #E8D4A8;
+
+  /* Semantic — warm-tinted */
+  --color-success: #3D8B37;
+  --color-success-soft: #EDF5EC;
+  --color-danger: #C4423B;
+  --color-danger-soft: #FDF0EF;
+  --color-warning: #B8860B;
+  --color-warning-soft: #FDF8EC;
+  --color-info: #5483B3;
+  --color-info-soft: #F0F5FA;
+
+  /* Typography */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+
+  /* Shadows */
+  --shadow-card: 0 1px 2px rgba(2, 16, 36, 0.03);
+  --shadow-elevated: 0 4px 16px rgba(2, 16, 36, 0.05);
+  --shadow-soft: 0 2px 8px rgba(2, 16, 36, 0.04);
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--color-sand-50);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-sand-300) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-sand-300);
+  border-radius: 3px;
+}
+
+/* Editorial selection color */
+::selection {
+  background-color: var(--color-vanilla);
+  color: var(--color-brand-950);
+}
