@@ -10,9 +10,12 @@ export default defineNuxtConfig({
     '@nuxt/fonts',
   ],
 
-  components: {
-    pathPrefix: false,
-  },
+  components: [
+    {
+      path: '~/components',
+      pathPrefix: false,
+    },
+  ],
 
   supabase: {
     redirect: false,
