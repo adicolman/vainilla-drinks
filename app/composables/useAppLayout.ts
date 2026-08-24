@@ -1,7 +1,7 @@
 export function useAppLayout() {
-  const sidebarOpen = ref(true)
-  const mobileMenuOpen = ref(false)
-  const isMobile = ref(false)
+  const sidebarOpen = useState('sidebar-open', () => true)
+  const mobileMenuOpen = useState('mobile-menu-open', () => false)
+  const isMobile = useState('is-mobile', () => false)
 
   function checkMobile() {
     if (import.meta.client) {

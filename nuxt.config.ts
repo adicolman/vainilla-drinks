@@ -5,7 +5,6 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
 
   modules: [
-    '@nuxtjs/supabase',
     '@nuxt/icon',
     '@nuxt/fonts',
   ],
@@ -17,8 +16,13 @@ export default defineNuxtConfig({
     },
   ],
 
-  supabase: {
-    redirect: false,
+  runtimeConfig: {
+    public: {
+      supabase: {
+        url: process.env.SUPABASE_URL,
+        key: process.env.SUPABASE_KEY,
+      },
+    },
   },
 
   css: ['~/assets/css/main.css'],

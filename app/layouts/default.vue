@@ -10,7 +10,7 @@ const { sidebarOpen, isMobile } = useAppLayout()
     <!-- Main area -->
     <div
       :class="[
-        isMobile ? 'ml-0' : sidebarOpen ? 'ml-[260px]' : 'ml-0',
+        isMobile ? 'ml-0' : sidebarOpen ? 'ml-[272px]' : 'ml-0',
       ]"
       class="flex-1 flex flex-col min-h-0 transition-all duration-300"
     >

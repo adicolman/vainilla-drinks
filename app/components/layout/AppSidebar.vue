@@ -18,13 +18,9 @@ const mainNav: NavGroup[] = [
     label: 'General',
     items: [
       { label: 'Dashboard', icon: 'lucide:layout-dashboard', to: '/dashboard' },
-    ],
-  },
-  {
-    label: 'Operación',
-    items: [
       { label: 'Ventas', icon: 'lucide:shopping-cart', to: '/ventas' },
       { label: 'Recetas', icon: 'lucide:chef-hat', to: '/recetas' },
+      { label: 'Producción', icon: 'lucide:flask-conical', to: '/produccion' },
       { label: 'Inventario', icon: 'lucide:package', to: '/inventario' },
       { label: 'Compras', icon: 'lucide:truck', to: '/compras' },
     ],
@@ -37,12 +33,16 @@ const mainNav: NavGroup[] = [
       { label: 'Reportes', icon: 'lucide:bar-chart-3', to: '/reportes' },
     ],
   },
+  {
+    label: 'Herramientas',
+    items: [
+      { label: 'Proveedores', icon: 'lucide:users', to: '/proveedores' },
+      { label: 'Configuración', icon: 'lucide:settings', to: '/configuracion' },
+    ],
+  },
 ]
 
-const bottomNav: NavItem[] = [
-  { label: 'Proveedores', icon: 'lucide:users', to: '/proveedores' },
-  { label: 'Configuración', icon: 'lucide:settings', to: '/configuracion' },
-]
+const { logout } = useAuth()
 
 function isActive(to: string) {
   if (to === '/dashboard') return route.path === '/dashboard'
@@ -68,54 +68,49 @@ function isActive(to: string) {
           ? 'translate-x-0'
           : '-translate-x-full'
         : sidebarOpen
-          ? 'w-[260px]'
-          : 'w-0',
+          ? 'opacity-100'
+          : 'opacity-0 pointer-events-none',
     ]"
-    class="fixed inset-y-0 left-0 z-50 flex flex-col bg-brand-950 text-white transition-all duration-300 ease-in-out overflow-hidden"
-    :style="{ minWidth: isMobile ? '280px' : undefined }"
+    class="fixed top-3 left-3 bottom-3 z-50 w-[252px] flex flex-col rounded-2xl overflow-hidden transition-all duration-300 ease-in-out
+           bg-brand-950 text-white
+           border border-white/[0.08]"
   >
     <!-- Brand -->
-    <div class="px-6 pt-7 pb-2">
-      <NuxtLink to="/dashboard" class="block group" @click="closeMobileMenu">
-        <div class="flex items-baseline gap-1.5">
-          <span class="text-[16px] font-bold tracking-[0.18em] uppercase text-white">
+    <div class="px-5 pt-6 pb-1">
+      <NuxtLink to="/dashboard" class="block" @click="closeMobileMenu">
+        <div class="flex items-center justify-center">
+          <span class="text-[17px] font-bold tracking-[0.16em] uppercase text-white">
             Vainilla
           </span>
-          <span class="text-[16px] font-light tracking-[0.18em] uppercase text-brand-400 group-hover:text-white transition-colors duration-300">
+          <span class="text-[17px] font-light tracking-[0.16em] uppercase text-brand-400 ml-1">
             Drinks
           </span>
         </div>
-        <div class="mt-2.5 h-px bg-gradient-to-r from-vanilla/30 via-brand-400/15 to-transparent" />
       </NuxtLink>
     </div>
 
     <!-- Main Navigation -->
-    <nav class="flex-1 overflow-y-auto px-3 pt-4 pb-4">
-      <div v-for="(group, gi) in mainNav" :key="group.label" :class="gi > 0 ? 'mt-7' : ''">
-        <p class="px-4 mb-3 text-[10px] font-semibold tracking-[0.22em] uppercase text-brand-400/40">
+    <nav class="flex-1 overflow-y-auto px-3 pt-4 pb-2">
+      <div v-for="(group, gi) in mainNav" :key="group.label" :class="gi > 0 ? 'mt-6' : ''">
+        <p class="px-4 mb-2 text-[10px] font-semibold tracking-[0.20em] uppercase text-brand-400/35">
           {{ group.label }}
         </p>
-        <ul class="space-y-1">
+        <ul class="space-y-0.5">
           <li v-for="item in group.items" :key="item.to">
             <NuxtLink
               :to="item.to"
               :class="[
                 isActive(item.to)
                   ? 'bg-white/[0.08] text-white'
-                  : 'text-brand-400/70 hover:text-white/90 hover:bg-white/[0.03]',
+                  : 'text-brand-400/60 hover:text-white/85 hover:bg-white/[0.03]',
               ]"
-              class="group flex items-center gap-3 px-4 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-200 relative"
+              class="group flex items-center gap-3 px-4 py-2 rounded-lg text-[13px] font-medium transition-all duration-150"
               @click="closeMobileMenu"
             >
-              <!-- Active indicator -->
-              <div
-                :class="isActive(item.to) ? 'opacity-100' : 'opacity-0'"
-                class="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-4 bg-vanilla rounded-full transition-opacity duration-200"
-              />
               <Icon
                 :name="item.icon"
-                :class="isActive(item.to) ? 'text-white' : 'text-brand-400/60 group-hover:text-brand-400/90'"
-                class="w-[18px] h-[18px] shrink-0 transition-colors duration-200"
+                :class="isActive(item.to) ? 'text-white' : 'text-brand-400/50 group-hover:text-brand-400/80'"
+                class="w-[17px] h-[17px] shrink-0 transition-colors duration-150"
               />
               <span>{{ item.label }}</span>
             </NuxtLink>
@@ -124,42 +119,19 @@ function isActive(to: string) {
       </div>
     </nav>
 
-    <!-- Bottom Navigation -->
-    <div class="px-3 pb-2">
-      <div class="h-px bg-white/[0.06] mx-3 mb-3" />
-      <ul class="space-y-1">
-        <li v-for="item in bottomNav" :key="item.to">
-          <NuxtLink
-            :to="item.to"
-            :class="[
-              isActive(item.to)
-                ? 'bg-white/[0.08] text-white'
-                : 'text-brand-400/50 hover:text-white/80 hover:bg-white/[0.03]',
-            ]"
-            class="group flex items-center gap-3 px-4 py-2 rounded-xl text-[13px] font-medium transition-all duration-200"
-            @click="closeMobileMenu"
-          >
-            <Icon
-              :name="item.icon"
-              class="w-[18px] h-[18px] shrink-0 text-brand-400/40 group-hover:text-brand-400/70 transition-colors duration-200"
-            />
-            <span>{{ item.label }}</span>
-          </NuxtLink>
-        </li>
-      </ul>
-    </div>
-
-    <!-- User footer -->
-    <div class="px-5 py-4 border-t border-white/[0.06]">
-      <div class="flex items-center gap-3">
-        <div class="w-8 h-8 rounded-full bg-vanilla/15 flex items-center justify-center ring-1 ring-vanilla/20">
-          <span class="text-[10px] font-bold tracking-wider text-vanilla">VD</span>
-        </div>
-        <div class="flex-1 min-w-0">
-          <p class="text-[13px] font-medium text-white/90 truncate">Admin</p>
-          <p class="text-[11px] text-brand-400/40 truncate">Vainilla Drinks</p>
-        </div>
-      </div>
+    <!-- Bottom: Cerrar sesión -->
+    <div class="px-3 pb-3 pt-2">
+      <div class="h-px bg-white/[0.06] mx-2 mb-2" />
+      <button
+        class="group flex items-center gap-3 px-4 py-2 rounded-lg text-[13px] font-medium text-brand-400/50 hover:text-white/85 hover:bg-white/[0.03] transition-all duration-150 w-full text-left"
+        @click="logout(); closeMobileMenu()"
+      >
+        <Icon
+          name="lucide:log-out"
+          class="w-[17px] h-[17px] shrink-0 text-brand-400/40 group-hover:text-brand-400/80 transition-colors duration-150"
+        />
+        <span>Cerrar sesión</span>
+      </button>
     </div>
   </aside>
 </template>

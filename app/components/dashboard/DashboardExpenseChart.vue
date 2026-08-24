@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Line } from 'vue-chartjs'
+import { Bar } from 'vue-chartjs'
 import { useMockData } from '~/composables/useMockData'
 
 const { expenseChartData } = useMockData()
@@ -8,20 +8,16 @@ const chartData = computed(() => ({
   labels: expenseChartData.value.labels,
   datasets: expenseChartData.value.datasets.map((ds, i) => ({
     ...ds,
-    borderWidth: i === 0 ? 2.5 : 1.5,
-    tension: 0.45,
-    fill: true,
-    pointRadius: 0,
-    pointHoverRadius: 4,
-    pointHoverBackgroundColor: ds.borderColor,
-    pointHoverBorderColor: '#fff',
-    pointHoverBorderWidth: 2,
+    borderWidth: 0,
+    borderRadius: 6,
+    barPercentage: 0.7,
+    categoryPercentage: 0.8,
     borderColor: i === 0 ? '#052659' : i === 1 ? '#7DA0CA' : '#B0A694',
     backgroundColor: i === 0
-      ? 'rgba(5, 38, 89, 0.06)'
+      ? 'rgba(5, 38, 89, 0.85)'
       : i === 1
-        ? 'rgba(125, 160, 202, 0.04)'
-        : 'rgba(176, 166, 148, 0.03)',
+        ? 'rgba(125, 160, 202, 0.7)'
+        : 'rgba(176, 166, 148, 0.5)',
   })),
 }))
 
@@ -101,7 +97,7 @@ const chartOptions = {
 <template>
   <div class="h-64">
     <ClientOnly>
-      <Line :data="chartData" :options="chartOptions" />
+      <Bar :data="chartData" :options="chartOptions" />
       <template #fallback>
         <LoadingState :lines="3" type="card" />
       </template>

@@ -1,10 +1,62 @@
+// =============================================================================
+// Domain Types — Vainilla Drinks
+// These types represent the application-level domain models.
+// For raw database types, see database.types.ts
+// =============================================================================
+
+// =============================================================================
+// AUTH & ORGANIZATION
+// =============================================================================
+
+export type UserRole = 'admin' | 'operator'
+
+export interface Organization {
+  id: string
+  nombre: string
+  slug: string
+  activo: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface Profile {
+  id: string
+  organization_id: string
+  nombre: string
+  email: string
+  rol: UserRole
+  activo: boolean
+  created_at: string
+  updated_at: string
+}
+
+// =============================================================================
+// DOMAIN ENTITIES
+// =============================================================================
+
+export interface Proveedor {
+  id: string
+  organization_id: string
+  nombre: string
+  contacto: string
+  telefono: string
+  email: string
+  direccion: string
+  notas: string
+  activo: boolean
+  created_at: string
+  updated_at: string
+}
+
 export interface Insumo {
   id: string
+  organization_id: string
   nombre: string
   categoria: string
   unidad_medida: UnidadMedida
   costo_unitario: number
-  merma_porcentaje: number
+  costo_promedio: number
+  volumen_botella: number | null
   stock_actual: number
   stock_minimo: number
   proveedor_principal_id: string | null
@@ -15,6 +67,7 @@ export interface Insumo {
 
 export interface Receta {
   id: string
+  organization_id: string
   nombre: string
   descripcion: string
   categoria: string
@@ -34,22 +87,12 @@ export interface RecetaIngrediente {
   created_at: string
 }
 
-export interface Proveedor {
-  id: string
-  nombre: string
-  contacto: string
-  telefono: string
-  email: string
-  direccion: string
-  notas: string
-  activo: boolean
-  created_at: string
-  updated_at: string
-}
-
 export interface Compra {
   id: string
-  proveedor_id: string
+  organization_id: string
+  proveedor_id: string | null
+  proveedor_nombre: string
+  usuario_id: string
   fecha: string
   total: number
   medio_pago: MedioPago
@@ -71,18 +114,22 @@ export interface CompraItem {
 
 export interface MovimientoStock {
   id: string
+  organization_id: string
   insumo_id: string
+  usuario_id: string
   tipo: TipoMovimientoStock
   cantidad: number
   unidad: UnidadMedida
   motivo: string
   referencia_id: string | null
   fecha: string
-  usuario_id: string
+  created_at: string
 }
 
 export interface Venta {
   id: string
+  organization_id: string
+  usuario_id: string
   fecha: string
   total: number
   estado: EstadoVenta
@@ -104,30 +151,69 @@ export interface VentaItem {
 
 export interface MovimientoGasto {
   id: string
+  organization_id: string
+  usuario_id: string
+  proveedor_id: string | null
   concepto: string
   categoria: CategoriaGasto
   monto: number
   fecha: string
-  proveedor_id: string | null
   medio_pago: MedioPago
   tipo: string
   comprobante_url: string | null
   descripcion: string
-  usuario_id: string
   created_at: string
 }
 
 export interface MovimientoCaja {
   id: string
+  organization_id: string
+  usuario_id: string
   tipo: TipoCaja
   concepto: string
   monto: number
   fecha: string
   referencia_tipo: string
-  referencia_id: string
+  referencia_id: string | null
   estado: string
-  usuario_id: string
+  created_at: string
 }
+
+export interface Produccion {
+  id: string
+  organization_id: string
+  usuario_id: string
+  receta_id: string
+  fecha: string
+  cantidad_producida: number
+  unidad: UnidadMedida
+  costo_total: number
+  notas: string
+  created_at: string
+}
+
+export interface ProduccionDetalle {
+  id: string
+  produccion_id: string
+  insumo_id: string
+  cantidad_consumida: number
+  unidad: UnidadMedida
+  costo_unitario: number
+  created_at: string
+}
+
+export interface Categoria {
+  id: string
+  organization_id: string
+  tipo: string
+  nombre: string
+  activo: boolean
+  created_at: string
+}
+
+// =============================================================================
+// ENUMS
+// =============================================================================
 
 export type UnidadMedida = 'ml' | 'l' | 'g' | 'kg' | 'unidad'
 
@@ -141,6 +227,10 @@ export type MedioPago = 'efectivo' | 'transferencia' | 'tarjeta' | 'mp'
 
 export type TipoCaja = 'ingreso' | 'egreso'
 
+// =============================================================================
+// UI / DASHBOARD TYPES
+// =============================================================================
+
 export interface MetricData {
   label: string
   value: number
@@ -148,6 +238,15 @@ export interface MetricData {
   trend: 'up' | 'down' | 'neutral'
   icon: string
   format: 'currency' | 'percent' | 'number'
+  extra?: string
+}
+
+export interface TimelineEvent {
+  id: string
+  time: string
+  title: string
+  description: string
+  color: 'brand' | 'vanilla' | 'success' | 'danger' | 'sand'
 }
 
 export interface InsightData {

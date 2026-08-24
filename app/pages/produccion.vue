@@ -2,22 +2,18 @@
 definePageMeta({ layout: 'default' })
 
 const showDrawer = ref(false)
-const { fetchCompras } = useCompras()
-
-onMounted(() => {
-  fetchCompras()
-})
+const { fetchProduccion } = useProduccion()
 
 function handleSaved() {
-  fetchCompras()
+  fetchProduccion()
 }
 </script>
 
 <template>
   <div>
-    <CompraList @create="showDrawer = true" />
+    <ProduccionList @create="showDrawer = true" />
 
-    <CompraDrawer
+    <ProduccionDrawer
       :open="showDrawer"
       @close="showDrawer = false"
       @saved="handleSaved"

@@ -5,6 +5,7 @@ import type {
   PaymentData,
   ReviewItem,
   ExpenseChartData,
+  TimelineEvent,
 } from '~/types'
 
 export function useMockData() {
@@ -249,6 +250,37 @@ export function useMockData() {
     ],
   })
 
+  const timelineEvents = ref<TimelineEvent[]>([
+    {
+      id: '1',
+      time: '09:00',
+      title: 'Recepción de proveedor',
+      description: 'Fruver del Sur — Frutas semanales',
+      color: 'brand',
+    },
+    {
+      id: '2',
+      time: '11:00',
+      title: 'Revisión de inventario',
+      description: 'Verificar stock mínimo de insumos',
+      color: 'vanilla',
+    },
+    {
+      id: '3',
+      time: '14:00',
+      title: 'Producción Negroni',
+      description: 'Lote #12 — 15 litros programados',
+      color: 'success',
+    },
+    {
+      id: '4',
+      time: '16:30',
+      title: 'Cierre de caja',
+      description: 'Conciliación diaria de ventas',
+      color: 'sand',
+    },
+  ])
+
   return {
     metrics,
     operationalMetrics,
@@ -257,5 +289,6 @@ export function useMockData() {
     upcomingPayments,
     reviewItems,
     expenseChartData,
+    timelineEvents,
   }
 }
