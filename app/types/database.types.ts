@@ -16,7 +16,7 @@ export type Json =
 // ENUMS
 // =============================================================================
 
-export type UnidadMedida = 'ml' | 'l' | 'g' | 'kg' | 'unidad'
+export type UnidadMedida = 'ml' | 'l' | 'kg' | 'unidad'
 export type TipoMovimientoStock = 'compra' | 'produccion' | 'venta' | 'merma' | 'ajuste' | 'devolucion'
 export type EstadoVenta = 'pendiente' | 'pagado' | 'preparando' | 'entregado' | 'cancelado'
 export type CategoriaGasto = 'publicidad' | 'servicios' | 'delivery' | 'equipamiento' | 'mantenimiento' | 'logistica' | 'impuestos' | 'otros'
@@ -139,7 +139,7 @@ export interface Database {
           unidad_medida: UnidadMedida
           costo_unitario: number
           costo_promedio: number
-          volumen_botella: number | null
+          cantidad_por_unidad: number | null
           stock_actual: number
           stock_minimo: number
           proveedor_principal_id: string | null

@@ -25,9 +25,9 @@ export function useCompras() {
   const { addToast } = useToast()
   const { profile } = useAuth()
 
-  const compras = ref<CompraConDetalle[]>([])
+  const compras = useState<CompraConDetalle[]>('compras', () => [])
   const insumos = ref<InsumoRow[]>([])
-  const isLoading = ref(false)
+  const isLoading = useState('compras-loading', () => false)
   const searchQuery = ref('')
   const filterEstado = ref('')
 

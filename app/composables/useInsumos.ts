@@ -11,8 +11,8 @@ export function useInsumos() {
   const { addToast } = useToast()
   const { profile } = useAuth()
 
-  const insumos = ref<InsumoRow[]>([])
-  const isLoading = ref(false)
+  const insumos = useState<InsumoRow[]>('insumos', () => [])
+  const isLoading = useState('insumos-loading', () => false)
   const searchQuery = ref('')
   const filterCategoria = ref('')
   const filterUnidad = ref('')
@@ -72,7 +72,7 @@ export function useInsumos() {
     costo_unitario: number
     stock_inicial: number
     stock_minimo: number
-    volumen_botella: number | null
+    cantidad_por_unidad: number | null
     proveedor_principal_id?: string | null
   }) {
     if (!profile.value) throw new Error('No hay usuario autenticado')
@@ -84,7 +84,7 @@ export function useInsumos() {
       unidad_medida: data.unidad_medida as any,
       costo_unitario: data.costo_unitario,
       costo_promedio: data.costo_unitario,
-      volumen_botella: data.volumen_botella,
+      cantidad_por_unidad: data.cantidad_por_unidad,
       stock_actual: 0,
       stock_minimo: data.stock_minimo,
       proveedor_principal_id: data.proveedor_principal_id || null,
@@ -133,7 +133,7 @@ export function useInsumos() {
     unidad_medida: string
     costo_unitario: number
     stock_minimo: number
-    volumen_botella: number | null
+    cantidad_por_unidad: number | null
     proveedor_principal_id?: string | null
     activo: boolean
   }) {
@@ -145,7 +145,7 @@ export function useInsumos() {
         unidad_medida: data.unidad_medida as any,
         costo_unitario: data.costo_unitario,
         stock_minimo: data.stock_minimo,
-        volumen_botella: data.volumen_botella,
+        cantidad_por_unidad: data.cantidad_por_unidad,
         proveedor_principal_id: data.proveedor_principal_id || null,
         activo: data.activo,
       })
@@ -175,6 +175,18 @@ export function useInsumos() {
     await fetchInsumos()
   }
 
+  async function deleteInsumo(id: string, nombre: string) {
+    const { error } = await client.rpc('eliminar_insumo', { p_insumo_id: id })
+
+    if (error) {
+      addToast('error', 'Error al eliminar insumo', error.message)
+      throw error
+    }
+
+    addToast('success', 'Insumo eliminado', nombre)
+    await fetchInsumos()
+  }
+
   return {
     insumos,
     isLoading,
@@ -188,5 +200,6 @@ export function useInsumos() {
     createInsumo,
     updateInsumo,
     deactivateInsumo,
+    deleteInsumo,
   }
 }

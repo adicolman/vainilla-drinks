@@ -3,13 +3,15 @@ import type { InsumoRow } from '~/composables/useInsumos'
 
 definePageMeta({ layout: 'default' })
 
-const { fetchInsumos, deactivateInsumo } = useInsumos()
+const { fetchInsumos, deactivateInsumo, deleteInsumo } = useInsumos()
 const { addToast } = useToast()
 
 const showDrawer = ref(false)
 const editingInsumo = ref<InsumoRow | null>(null)
 const insumoToDeactivate = ref<InsumoRow | null>(null)
 const showDeactivateConfirm = ref(false)
+const insumoToDelete = ref<InsumoRow | null>(null)
+const showDeleteConfirm = ref(false)
 
 onMounted(() => {
   fetchInsumos()
@@ -49,6 +51,22 @@ function handleDrawerClose() {
 function handleSaved() {
   fetchInsumos()
 }
+
+function openDelete(insumo: InsumoRow) {
+  insumoToDelete.value = insumo
+  showDeleteConfirm.value = true
+}
+
+async function confirmDelete() {
+  if (!insumoToDelete.value) return
+  try {
+    await deleteInsumo(insumoToDelete.value.id, insumoToDelete.value.nombre)
+  } catch {
+    // toast already shown
+  }
+  showDeleteConfirm.value = false
+  insumoToDelete.value = null
+}
 </script>
 
 <template>
@@ -57,6 +75,7 @@ function handleSaved() {
       @create="openCreate"
       @edit="openEdit"
       @deactivate="openDeactivate"
+      @delete="openDelete"
     />
 
     <InsumoDrawer
@@ -90,6 +109,33 @@ function handleSaved() {
           >
             Desactivar
           </button>
+        </div>
+      </div>
+    </AppModal>
+
+    <!-- Delete confirmation -->
+    <AppModal :open="showDeleteConfirm" @close="showDeleteConfirm = false">
+      <div class="p-6">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-full bg-danger-soft flex items-center justify-center">
+            <Icon name="lucide:trash-2" class="w-5 h-5 text-danger" />
+          </div>
+          <div>
+            <h3 class="text-[15px] font-semibold text-brand-950">Eliminar insumo</h3>
+            <p class="text-[13px] text-danger font-medium">Esta acción no se puede deshacer</p>
+          </div>
+        </div>
+        <p class="text-[13px] text-sand-400 mb-2">
+          ¿Segurás que querés eliminar <strong class="text-brand-950">{{ insumoToDelete?.nombre }}</strong>?
+        </p>
+        <p class="text-[12px] text-sand-400 mb-6">
+          Se eliminarán todos los registros asociados: movimientos de stock, items de compra, ingredientes de recetas y detalles de producción.
+        </p>
+        <div class="flex items-center justify-end gap-3">
+          <SecondaryButton @click="showDeleteConfirm = false">Cancelar</SecondaryButton>
+          <PrimaryButton variant="danger" @click="confirmDelete">
+            Eliminar todo
+          </PrimaryButton>
         </div>
       </div>
     </AppModal>

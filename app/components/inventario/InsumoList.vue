@@ -5,6 +5,7 @@ const emit = defineEmits<{
   create: []
   edit: [insumo: InsumoRow]
   deactivate: [insumo: InsumoRow]
+  delete: [insumo: InsumoRow]
 }>()
 
 const {
@@ -23,7 +24,6 @@ const unidadOptions = [
   { value: '', label: 'Todas' },
   { value: 'ml', label: 'ml' },
   { value: 'l', label: 'L' },
-  { value: 'g', label: 'g' },
   { value: 'kg', label: 'kg' },
   { value: 'unidad', label: 'Unidad' },
 ]
@@ -174,6 +174,7 @@ function clearFilters() {
         :insumo="insumo"
         @edit="emit('edit', $event)"
         @deactivate="emit('deactivate', $event)"
+        @delete="emit('delete', $event)"
       />
     </div>
   </div>

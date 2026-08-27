@@ -18,8 +18,8 @@ export function useProduccion() {
   const { addToast } = useToast()
   const { profile } = useAuth()
 
-  const produccion = ref<ProduccionConDetalle[]>([])
-  const isLoading = ref(false)
+  const produccion = useState<ProduccionConDetalle[]>('produccion', () => [])
+  const isLoading = useState('produccion-loading', () => false)
   const searchQuery = ref('')
 
   const filteredProduccion = computed(() => {

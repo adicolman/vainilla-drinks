@@ -19,9 +19,9 @@ export function useRecetas() {
   const { addToast } = useToast()
   const { profile } = useAuth()
 
-  const recetas = ref<RecetaConIngredientes[]>([])
+  const recetas = useState<RecetaConIngredientes[]>('recetas', () => [])
   const insumos = ref<InsumoRow[]>([])
-  const isLoading = ref(false)
+  const isLoading = useState('recetas-loading', () => false)
   const searchQuery = ref('')
   const filterCategoria = ref('')
   const filterEstado = ref('')

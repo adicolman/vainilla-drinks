@@ -33,7 +33,7 @@ const medioPagoOptions = [
 const insumoOptions = computed(() =>
   insumos.value.map(i => ({
     value: i.id,
-    label: `${i.nombre} (${i.unidad_medida}${i.volumen_botella ? ' — ' + i.volumen_botella + 'ml' : ''})`,
+    label: `${i.nombre} (${i.unidad_medida}${i.cantidad_por_unidad ? ' — ' + i.cantidad_por_unidad + i.unidad_medida : ''})`,
   }))
 )
 

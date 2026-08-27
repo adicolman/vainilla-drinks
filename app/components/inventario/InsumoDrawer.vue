@@ -25,7 +25,7 @@ const form = reactive({
   costo_unitario: 0,
   stock_inicial: 0,
   stock_minimo: 0,
-  volumen_botella: null as number | null,
+  cantidad_por_unidad: null as number | null,
   proveedor_principal_id: '',
   activo: true,
 })
@@ -42,10 +42,29 @@ const isSaving = ref(false)
 const unidadOptions = [
   { value: 'ml', label: 'ml' },
   { value: 'l', label: 'L' },
-  { value: 'g', label: 'g' },
   { value: 'kg', label: 'kg' },
   { value: 'unidad', label: 'Unidad' },
 ]
+
+const cantidadLabel = computed(() => {
+  const labels: Record<string, string> = {
+    ml: 'Cantidad por botella (ml)',
+    l: 'Cantidad por botella (L)',
+    kg: 'Cantidad por paquete (kg)',
+    unidad: 'Unidades por paquete',
+  }
+  return labels[form.unidad_medida] || 'Cantidad por unidad de compra'
+})
+
+const cantidadHelper = computed(() => {
+  const helpers: Record<string, string> = {
+    ml: 'Ej: 750 para una botella de 750ml',
+    l: 'Ej: 1 para una botella de 1L',
+    kg: 'Ej: 2.5 para un paquete de 2.5kg',
+    unidad: 'Ej: 100 para un paquete de 100 vasos',
+  }
+  return helpers[form.unidad_medida] || 'Cuántas unidades base trae 1 unidad de compra'
+})
 
 watch(() => props.open, (val) => {
   if (val) fetchCategorias('insumo')
@@ -56,7 +75,7 @@ watch(() => props.open, (val) => {
     form.costo_unitario = Number(props.insumo.costo_unitario)
     form.stock_inicial = 0
     form.stock_minimo = Number(props.insumo.stock_minimo)
-    form.volumen_botella = props.insumo.volumen_botella != null ? Number(props.insumo.volumen_botella) : null
+    form.cantidad_por_unidad = props.insumo.cantidad_por_unidad != null ? Number(props.insumo.cantidad_por_unidad) : null
     form.proveedor_principal_id = props.insumo.proveedor_principal_id || ''
     form.activo = props.insumo.activo
   } else if (val) {
@@ -66,7 +85,7 @@ watch(() => props.open, (val) => {
     form.costo_unitario = 0
     form.stock_inicial = 0
     form.stock_minimo = 0
-    form.volumen_botella = null
+    form.cantidad_por_unidad = null
     form.proveedor_principal_id = ''
     form.activo = true
   }
@@ -119,7 +138,7 @@ async function handleSubmit() {
         unidad_medida: form.unidad_medida,
         costo_unitario: form.costo_unitario,
         stock_minimo: form.stock_minimo,
-        volumen_botella: form.volumen_botella,
+        cantidad_por_unidad: form.cantidad_por_unidad,
         proveedor_principal_id: form.proveedor_principal_id || null,
         activo: form.activo,
       })
@@ -131,7 +150,7 @@ async function handleSubmit() {
         costo_unitario: form.costo_unitario,
         stock_inicial: form.stock_inicial,
         stock_minimo: form.stock_minimo,
-        volumen_botella: form.volumen_botella,
+        cantidad_por_unidad: form.cantidad_por_unidad,
         proveedor_principal_id: form.proveedor_principal_id || null,
       })
     }
@@ -200,20 +219,20 @@ async function handleSubmit() {
         :disabled="isSaving"
       />
 
-      <div v-if="form.unidad_medida === 'ml' || form.unidad_medida === 'l'" class="space-y-1">
+      <div class="space-y-1">
         <AppInput
-          v-model="form.volumen_botella"
-          label="Volumen de la botella (ml)"
+          v-model="form.cantidad_por_unidad"
+          :label="cantidadLabel"
           type="number"
-          helper="Ej: 750 para una botella de 750ml. Se usa para calcular costo por ml."
+          :helper="cantidadHelper"
           :disabled="isSaving"
         />
       </div>
 
-      <div v-if="form.volumen_botella && form.costo_unitario && form.volumen_botella > 0" class="bg-sand-50 rounded-xl p-3">
-        <p class="text-[12px] text-sand-400">Costo por ml</p>
+      <div v-if="form.cantidad_por_unidad && form.costo_unitario && form.cantidad_por_unidad > 0" class="bg-sand-50 rounded-xl p-3">
+        <p class="text-[12px] text-sand-400">Costo por {{ form.unidad_medida }}</p>
         <p class="text-[16px] font-semibold text-brand-950">
-          ${{ (form.costo_unitario / form.volumen_botella).toFixed(2) }}
+          ${{ (form.costo_unitario / form.cantidad_por_unidad).toFixed(2) }}/{{ form.unidad_medida }}
         </p>
       </div>
 

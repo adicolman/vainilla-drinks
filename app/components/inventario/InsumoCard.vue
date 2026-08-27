@@ -8,7 +8,11 @@ const props = defineProps<{
 const emit = defineEmits<{
   edit: [insumo: InsumoRow]
   deactivate: [insumo: InsumoRow]
+  delete: [insumo: InsumoRow]
 }>()
+
+const { profile } = useAuth()
+const isAdmin = computed(() => profile.value?.rol === 'admin')
 
 const unidadLabels: Record<string, string> = {
   ml: 'ml',
@@ -54,6 +58,14 @@ function formatNumber(n: number | string) {
           @click="emit('deactivate', insumo)"
         >
           <Icon name="lucide:ban" class="w-4 h-4" />
+        </button>
+        <button
+          v-if="isAdmin"
+          class="w-8 h-8 flex items-center justify-center rounded-lg text-sand-400 hover:text-danger hover:bg-danger-soft transition-colors"
+          title="Eliminar"
+          @click="emit('delete', insumo)"
+        >
+          <Icon name="lucide:trash-2" class="w-4 h-4" />
         </button>
       </div>
     </div>
