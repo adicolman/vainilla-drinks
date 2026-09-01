@@ -155,7 +155,7 @@ export interface Database {
           unidad_medida: UnidadMedida
           costo_unitario?: number
           costo_promedio?: number
-          volumen_botella?: number | null
+          cantidad_por_unidad?: number | null
           stock_actual?: number
           stock_minimo?: number
           proveedor_principal_id?: string | null
@@ -171,7 +171,7 @@ export interface Database {
           unidad_medida?: UnidadMedida
           costo_unitario?: number
           costo_promedio?: number
-          volumen_botella?: number | null
+          cantidad_por_unidad?: number | null
           stock_actual?: number
           stock_minimo?: number
           proveedor_principal_id?: string | null

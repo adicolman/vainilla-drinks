@@ -4,6 +4,12 @@ definePageMeta({ layout: 'default' })
 useHead({
   title: 'Dashboard — Vainilla Drinks',
 })
+
+const { fetchAll } = useDashboard()
+
+onMounted(() => {
+  fetchAll()
+})
 </script>
 
 <template>
@@ -20,12 +26,8 @@ useHead({
         <div class="px-5 py-4 border-b border-sand-200/40">
           <div class="flex items-center justify-between mb-1">
             <div>
-              <h3 class="text-[14px] font-bold text-brand-950">Gastos del período</h3>
-              <p class="text-[11px] text-sand-400 mt-0.5 font-medium">Evolución de egresos</p>
-            </div>
-            <div class="flex items-center gap-1.5 text-[10px] font-semibold text-success bg-success-soft px-2 py-0.5 rounded-md">
-              <Icon name="lucide:arrow-up" class="w-2.5 h-2.5" />
-              +3%
+              <h3 class="text-[14px] font-bold text-brand-950">Compras del mes</h3>
+              <p class="text-[11px] text-sand-400 mt-0.5 font-medium">Por semana</p>
             </div>
           </div>
         </div>
@@ -43,7 +45,7 @@ useHead({
               <p class="text-[11px] text-sand-400 mt-0.5 font-medium">Actividad reciente</p>
             </div>
             <NuxtLink
-              to="/caja"
+              to="/reportes"
               class="text-[11px] font-semibold text-brand-600 hover:text-brand-950 transition-colors"
             >
               Ver todos →

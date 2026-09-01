@@ -1,24 +1,22 @@
 <script setup lang="ts">
 import { Bar } from 'vue-chartjs'
-import { useMockData } from '~/composables/useMockData'
 
-const { expenseChartData } = useMockData()
+const { comprasPorSemana } = useDashboard()
 
 const chartData = computed(() => ({
-  labels: expenseChartData.value.labels,
-  datasets: expenseChartData.value.datasets.map((ds, i) => ({
-    ...ds,
-    borderWidth: 0,
-    borderRadius: 6,
-    barPercentage: 0.7,
-    categoryPercentage: 0.8,
-    borderColor: i === 0 ? '#052659' : i === 1 ? '#7DA0CA' : '#B0A694',
-    backgroundColor: i === 0
-      ? 'rgba(5, 38, 89, 0.85)'
-      : i === 1
-        ? 'rgba(125, 160, 202, 0.7)'
-        : 'rgba(176, 166, 148, 0.5)',
-  })),
+  labels: comprasPorSemana.value.labels.length > 0 ? comprasPorSemana.value.labels : ['Sin datos'],
+  datasets: [
+    {
+      label: 'Compras',
+      data: comprasPorSemana.value.data.length > 0 ? comprasPorSemana.value.data : [0],
+      borderWidth: 0,
+      borderRadius: 6,
+      barPercentage: 0.7,
+      categoryPercentage: 0.8,
+      borderColor: '#052659',
+      backgroundColor: 'rgba(5, 38, 89, 0.85)',
+    },
+  ],
 }))
 
 const chartOptions = {

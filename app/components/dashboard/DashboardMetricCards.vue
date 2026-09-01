@@ -1,20 +1,35 @@
 <script setup lang="ts">
 import { formatCurrency, formatPercent, formatVariation } from '~/utils/formatting'
 
-const { metrics } = useMockData()
+const { valorInventario, comprasEsteMes, variacionCompras, insumosStockBajo } = useDashboard()
 
-const displayMetrics = computed(() =>
-  metrics.value.filter(m => ['Ingresos', 'Ganancia'].includes(m.label))
-)
+const cards = computed(() => [
+  {
+    label: 'Valor de inventario',
+    value: valorInventario.value,
+    format: 'currency' as const,
+    icon: 'lucide:package',
+    trend: 'neutral' as const,
+    variation: null,
+  },
+  {
+    label: 'Compras del mes',
+    value: comprasEsteMes.value,
+    format: 'currency' as const,
+    icon: 'lucide:shopping-cart',
+    trend: variacionCompras.value > 0 ? 'up' as const : variacionCompras.value < 0 ? 'down' as const : 'neutral' as const,
+    variation: variacionCompras.value,
+  },
+])
 
 const iconMap: Record<string, string> = {
-  Ingresos: 'lucide:trending-up',
-  Ganancia: 'lucide:wallet',
+  'Valor de inventario': 'lucide:package',
+  'Compras del mes': 'lucide:shopping-cart',
 }
 
 const colorMap: Record<string, { bg: string, icon: string }> = {
-  Ingresos: { bg: 'bg-brand-600/8', icon: 'text-brand-600' },
-  Ganancia: { bg: 'bg-success/8', icon: 'text-success' },
+  'Valor de inventario': { bg: 'bg-brand-600/8', icon: 'text-brand-600' },
+  'Compras del mes': { bg: 'bg-vanilla/20', icon: 'text-amber-600' },
 }
 
 function formatValue(value: number, format: string): string {
@@ -29,7 +44,7 @@ function formatValue(value: number, format: string): string {
 <template>
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
     <div
-      v-for="metric in displayMetrics"
+      v-for="metric in cards"
       :key="metric.label"
       class="bg-white rounded-2xl border border-sand-200/60 p-4 shadow-card hover:shadow-elevated transition-all duration-300 group"
     >
@@ -42,11 +57,10 @@ function formatValue(value: number, format: string): string {
           />
         </div>
         <span
+          v-if="metric.variation !== null"
           :class="[
-            metric.trend === 'up'
-              ? (metric.label === 'Gastos' ? 'text-danger bg-danger-soft' : 'text-success bg-success-soft')
-              : metric.trend === 'down'
-                ? (metric.label === 'Gastos' ? 'text-success bg-success-soft' : 'text-danger bg-danger-soft')
+            metric.trend === 'up' ? 'text-danger bg-danger-soft'
+              : metric.trend === 'down' ? 'text-success bg-success-soft'
                 : 'text-sand-400 bg-sand-100'
           ]"
           class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold"

@@ -7,11 +7,20 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "db:link": "supabase link --project-ref pwcvlxsvcaikzjvfzvza",
+    "db:push": "supabase db push",
+    "db:pull": "supabase db pull",
+    "db:diff": "supabase db diff",
+    "db:migration:new": "supabase migration new",
+    "db:migration:list": "supabase migration list",
+    "db:migration:repair": "supabase migration repair",
+    "db:rollback": "supabase db query --linked -f"
   },
   "dependencies": {
     "@nuxt/fonts": "^0.14.0",
     "@nuxt/icon": "^2.5.0",
+    "@supabase/supabase-js": "^2.112.3",
     "@tailwindcss/vite": "^4.3.3",
     "chart.js": "^4.5.1",
     "nuxt": "^4.5.2",
@@ -22,6 +31,6 @@
   },
   "devDependencies": {
     "@iconify-json/lucide": "^1.2.124",
-    "@nuxtjs/supabase": "^2.0.10"
+    "supabase": "^2.116.0"
   }
 }
