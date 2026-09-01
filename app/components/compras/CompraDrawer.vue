@@ -39,7 +39,7 @@ const insumoOptions = computed(() =>
 
 function handleInsumoSelect(idx: number) {
   const item = items.value[idx]
-  if (!item.insumo_id) return
+  if (!item || !item.insumo_id) return
   const insumo = insumos.value.find(i => i.id === item.insumo_id)
   if (insumo) {
     item.costo_unitario = Number(insumo.costo_unitario)

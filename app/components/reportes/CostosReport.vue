@@ -39,12 +39,12 @@ const totalInsumos = computed(() => insumos.value.length)
           <div class="flex-1">
             <div class="flex items-center justify-between mb-1">
               <span class="text-[13px] font-medium text-brand-950">{{ item.nombre }}</span>
-              <span class="text-[13px] font-semibold text-brand-950">${{ formatNumber(item.costo_por_base) }}/{{ item.unidad_medida }}</span>
+              <span class="text-[13px] font-semibold text-brand-950">${{ formatNumber(item.costo_por_unidad) }}/{{ item.unidad_medida }}</span>
             </div>
             <div class="w-full bg-sand-100 rounded-full h-1.5">
               <div
                 class="bg-brand-600 h-1.5 rounded-full transition-all"
-                :style="{ width: `${(item.costo_por_base / (topInsumosPorCosto[0]?.costo_por_base || 1)) * 100}%` }"
+                :style="{ width: `${(item.costo_por_unidad / (topInsumosPorCosto[0]?.costo_por_unidad || 1)) * 100}%` }"
               />
             </div>
           </div>

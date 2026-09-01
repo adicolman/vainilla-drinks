@@ -13,6 +13,7 @@ const emit = defineEmits<{
 }>()
 
 const { createReceta, updateReceta, insumos, fetchInsumos } = useRecetas()
+const { addToast } = useToast()
 
 const isEditing = computed(() => !!props.receta)
 

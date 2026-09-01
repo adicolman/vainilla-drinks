@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const props = defineProps<{
-  modelValue: string | number
+  modelValue: string | number | null
   label?: string
   placeholder?: string
   type?: string
@@ -23,7 +23,7 @@ const inputType = computed(() => props.type || 'text')
     </label>
     <input
       :type="inputType"
-      :value="modelValue"
+      :value="modelValue ?? ''"
       :placeholder="placeholder"
       :disabled="disabled"
       class="w-full px-4 py-2.5 bg-white text-brand-950 text-sm rounded-xl border border-sand-200 placeholder:text-sand-300 focus:outline-none focus:ring-2 focus:ring-brand-600/20 focus:border-brand-400 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"

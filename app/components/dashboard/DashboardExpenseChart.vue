@@ -39,7 +39,7 @@ const chartOptions = {
         font: {
           family: 'Inter',
           size: 11,
-          weight: '500' as const,
+          weight: 500,
         },
         color: '#B0A694',
       },
@@ -52,7 +52,7 @@ const chartOptions = {
       borderWidth: 1,
       cornerRadius: 10,
       padding: { top: 10, bottom: 10, left: 14, right: 14 },
-      titleFont: { family: 'Inter', weight: '600' as const, size: 12 },
+      titleFont: { family: 'Inter', weight: 600, size: 12 },
       bodyFont: { family: 'Inter', size: 12 },
       bodySpacing: 6,
       usePointStyle: true,
@@ -69,7 +69,7 @@ const chartOptions = {
     x: {
       grid: { display: false },
       ticks: {
-        font: { family: 'Inter', size: 11, weight: '400' as const },
+        font: { family: 'Inter', size: 11, weight: 400 },
         color: '#B0A694',
         padding: 8,
       },
@@ -81,7 +81,7 @@ const chartOptions = {
         drawBorder: false,
       },
       ticks: {
-        font: { family: 'Inter', size: 11, weight: '400' as const },
+        font: { family: 'Inter', size: 11, weight: 400 },
         color: '#B0A694',
         padding: 12,
         callback: (value: any) => `$${(value / 1000).toFixed(0)}k`,

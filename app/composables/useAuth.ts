@@ -1,3 +1,5 @@
+import type { Profile } from '~/types'
+
 export function useAuth() {
   const client = useSupabaseClient()
   const user = useSupabaseUser()

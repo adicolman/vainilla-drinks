@@ -114,7 +114,7 @@ const valorTotalStock = computed(() =>
               <td class="px-5 py-3 text-right font-medium text-brand-950">{{ formatCurrency(i.valor_total) }}</td>
               <td class="px-5 py-3 text-center">
                 <StatusBadge
-                  :label="estadoLabel[i.estado]"
+                  :label="estadoLabel[i.estado] || i.estado"
                   :variant="(estadoVariant[i.estado] || 'default') as any"
                 />
               </td>

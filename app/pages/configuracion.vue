@@ -144,7 +144,7 @@ const isAdmin = computed(() => profile.value?.rol === 'admin')
       </div>
 
       <!-- Loading -->
-      <LoadingState v-if="isLoading" type="list" />
+      <LoadingState v-if="isLoading" type="card" />
 
       <!-- Empty state -->
       <EmptyState

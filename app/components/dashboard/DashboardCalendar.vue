@@ -40,7 +40,7 @@ const calendarDays = computed(() => {
   // Current month days
   for (let d = 1; d <= daysInMonth; d++) {
     const isToday = d === today.getDate() && month === today.getMonth() && year === today.getFullYear()
-    const hasEvent = month === today.getMonth() && year === today.getFullYear() && diasConEventosEsteMes.includes(d)
+    const hasEvent = month === today.getMonth() && year === today.getFullYear() && diasConEventosEsteMes.value.includes(d)
     days.push({ day: d, isCurrentMonth: true, isToday, hasEvent })
   }
 

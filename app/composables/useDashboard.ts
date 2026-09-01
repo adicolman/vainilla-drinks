@@ -89,7 +89,7 @@ export function useDashboard() {
       .forEach(c => {
         const dia = new Date(c.fecha).getDate()
         const semanaIdx = Math.min(Math.floor((dia - 1) / 7), 4)
-        semanas[semanaIdx] += Number(c.total)
+        semanas[semanaIdx] = (semanas[semanaIdx] ?? 0) + Number(c.total)
       })
     // Recortar semanas vacías al final
     let ultimaConDatos = 0
@@ -126,7 +126,7 @@ export function useDashboard() {
   })
 
   const eventosHoy = computed(() => {
-    const hoyStr = hoy.toISOString().split('T')[0]
+    const hoyStr = hoy.toISOString().slice(0, 10)
     return eventosRecientes.value.filter(e => e.fecha?.startsWith(hoyStr))
   })
 

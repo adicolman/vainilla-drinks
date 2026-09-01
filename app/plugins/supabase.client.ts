@@ -1,5 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
+import type { Session, User } from '@supabase/supabase-js'
 import { defineNuxtPlugin, useRuntimeConfig } from '#imports'
+import type { Database } from '~/types/database.types'
 
 export default defineNuxtPlugin({
   name: 'supabase',
@@ -9,7 +11,7 @@ export default defineNuxtPlugin({
     const url = config.public.supabase.url as string
     const key = config.public.supabase.key as string
 
-    const supabase = createClient(url, key, {
+    const supabase = createClient<Database>(url, key, {
       auth: {
         flowType: 'pkce',
         autoRefreshToken: true,
@@ -18,8 +20,8 @@ export default defineNuxtPlugin({
       },
     })
 
-    const userState = useState('supabase_user', () => null)
-    const sessionState = useState('supabase_session', () => null)
+    const userState = useState<User | null>('supabase_user', () => null)
+    const sessionState = useState<Session | null>('supabase_session', () => null)
 
     const { data } = await supabase.auth.getSession()
     if (data.session) {

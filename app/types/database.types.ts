@@ -28,7 +28,7 @@ export type UserRole = 'admin' | 'operator'
 // DATABASE TABLES
 // =============================================================================
 
-export interface Database {
+export type Database = {
   public: {
     Tables: {
       organizations: {
@@ -56,6 +56,7 @@ export interface Database {
           created_at?: string
           updated_at?: string
         }
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -88,6 +89,7 @@ export interface Database {
           created_at?: string
           updated_at?: string
         }
+        Relationships: []
       }
       proveedores: {
         Row: {
@@ -129,6 +131,7 @@ export interface Database {
           created_at?: string
           updated_at?: string
         }
+        Relationships: []
       }
       insumos: {
         Row: {
@@ -179,6 +182,7 @@ export interface Database {
           created_at?: string
           updated_at?: string
         }
+        Relationships: []
       }
       recetas: {
         Row: {
@@ -217,6 +221,7 @@ export interface Database {
           created_at?: string
           updated_at?: string
         }
+        Relationships: []
       }
       receta_ingredientes: {
         Row: {
@@ -243,6 +248,7 @@ export interface Database {
           unidad?: UnidadMedida
           created_at?: string
         }
+        Relationships: []
       }
       compras: {
         Row: {
@@ -287,6 +293,7 @@ export interface Database {
           notas?: string
           created_at?: string
         }
+        Relationships: []
       }
       compra_items: {
         Row: {
@@ -316,6 +323,7 @@ export interface Database {
           costo_unitario?: number
           subtotal?: number
         }
+        Relationships: []
       }
       movimientos_stock: {
         Row: {
@@ -347,6 +355,7 @@ export interface Database {
         Update: {
           // APPEND-ONLY: Update is disabled via RLS
         }
+        Relationships: []
       }
       ventas: {
         Row: {
@@ -382,6 +391,7 @@ export interface Database {
           costo_total_historico?: number
           created_at?: string
         }
+        Relationships: []
       }
       venta_items: {
         Row: {
@@ -414,6 +424,7 @@ export interface Database {
           costo_unitario_historico?: number
           costo_total_historico?: number
         }
+        Relationships: []
       }
       produccion: {
         Row: {
@@ -452,6 +463,7 @@ export interface Database {
           notas?: string
           created_at?: string
         }
+        Relationships: []
       }
       produccion_detalles: {
         Row: {
@@ -481,6 +493,7 @@ export interface Database {
           costo_unitario?: number
           created_at?: string
         }
+        Relationships: []
       }
       movimientos_gasto: {
         Row: {
@@ -528,6 +541,7 @@ export interface Database {
           descripcion?: string
           created_at?: string
         }
+        Relationships: []
       }
       movimientos_caja: {
         Row: {
@@ -569,6 +583,7 @@ export interface Database {
           estado?: string
           created_at?: string
         }
+        Relationships: []
       }
       categorias: {
         Row: {
@@ -595,6 +610,7 @@ export interface Database {
           activo?: boolean
           created_at?: string
         }
+        Relationships: []
       }
     }
     Functions: {
@@ -633,6 +649,13 @@ export interface Database {
         }
         Returns: string
       }
+      eliminar_insumo: {
+        Args: { p_insumo_id: string }
+        Returns: undefined
+      }
+    }
+    Views: {
+      [_ in never]: never
     }
     Enums: {
       unidad_medida: UnidadMedida
@@ -642,6 +665,9 @@ export interface Database {
       medio_pago: MedioPago
       tipo_caja: TipoCaja
       user_role: UserRole
+    }
+    CompositeTypes: {
+      [_ in never]: never
     }
   }
 }

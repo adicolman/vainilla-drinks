@@ -35,7 +35,7 @@ const iconColorMap: Record<string, string> = {
           :class="colorMap[toast.type]"
           class="pointer-events-auto flex items-start gap-3 px-4 py-3 rounded-xl border shadow-elevated max-w-sm"
         >
-          <Icon :name="iconMap[toast.type]" :class="iconColorMap[toast.type]" class="w-5 h-5 mt-0.5 shrink-0" />
+          <Icon :name="iconMap[toast.type] || 'lucide:info'" :class="iconColorMap[toast.type]" class="w-5 h-5 mt-0.5 shrink-0" />
           <div class="flex-1 min-w-0">
             <p class="text-sm font-semibold text-brand-950">{{ toast.title }}</p>
             <p v-if="toast.message" class="text-xs text-sand-400 mt-0.5">{{ toast.message }}</p>

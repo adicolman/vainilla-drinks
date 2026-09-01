@@ -1,6 +1,9 @@
-export function useSupabaseClient() {
+import type { SupabaseClient } from '@supabase/supabase-js'
+import type { Database } from '~/types/database.types'
+
+export function useSupabaseClient<T = Database>() {
   const nuxtApp = useNuxtApp()
-  return nuxtApp.$supabase.client
+  return nuxtApp.$supabase.client as unknown as SupabaseClient<T>
 }
 
 export function useSupabaseUser() {
