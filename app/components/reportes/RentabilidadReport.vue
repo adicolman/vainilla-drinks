@@ -3,6 +3,10 @@ import type { RecetaConIngredientes } from '~/composables/useRecetas'
 
 const client = useSupabaseClient()
 const { addToast } = useToast()
+const {
+  totalVentas, totalCostosVentas, beneficioNeto, margenReal,
+  totalCompras, cantidadVentas, ticketPromedio,
+} = useReportes()
 
 const recetas = ref<RecetaConIngredientes[]>([])
 const isLoading = ref(false)
@@ -73,10 +77,38 @@ const menosRentable = computed(() => recetasConMargen.value[recetasConMargen.val
     <LoadingState v-if="isLoading" type="card" />
 
     <template v-else>
-      <!-- Cards resumen -->
+      <!-- Resumen financiero real -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        <div class="bg-white rounded-2xl border border-sand-200/60 p-5">
+          <p class="text-[11px] text-sand-300 uppercase tracking-wider font-medium">Total ventas</p>
+          <p class="text-[22px] font-bold text-success mt-1">{{ formatCurrency(totalVentas) }}</p>
+          <p class="text-[12px] text-sand-400 mt-1">{{ cantidadVentas }} ventas · Ticket prom: {{ formatCurrency(ticketPromedio) }}</p>
+        </div>
+        <div class="bg-white rounded-2xl border border-sand-200/60 p-5">
+          <p class="text-[11px] text-sand-300 uppercase tracking-wider font-medium">Costo de ventas</p>
+          <p class="text-[22px] font-bold text-danger mt-1">{{ formatCurrency(totalCostosVentas) }}</p>
+          <p class="text-[12px] text-sand-400 mt-1">Costo de insumos vendidos</p>
+        </div>
+        <div class="bg-white rounded-2xl border border-sand-200/60 p-5">
+          <p class="text-[11px] text-sand-300 uppercase tracking-wider font-medium">Beneficio neto</p>
+          <p :class="beneficioNeto >= 0 ? 'text-success' : 'text-danger'" class="text-[22px] font-bold mt-1">
+            {{ formatCurrency(beneficioNeto) }}
+          </p>
+          <p class="text-[12px] text-sand-400 mt-1">Ventas − Costo de ventas</p>
+        </div>
+        <div class="rounded-2xl p-5" :class="margenReal >= 30 ? 'bg-success-soft' : margenReal >= 0 ? 'bg-warning-soft' : 'bg-danger-soft'">
+          <p class="text-[11px] uppercase tracking-wider font-medium" :class="margenReal >= 30 ? 'text-success' : margenReal >= 0 ? 'text-warning' : 'text-danger'">Margen real</p>
+          <p :class="margenReal >= 30 ? 'text-success' : margenReal >= 0 ? 'text-warning' : 'text-danger'" class="text-[22px] font-bold mt-1">
+            {{ formatPercent(margenReal) }}
+          </p>
+          <p class="text-[12px] mt-1" :class="margenReal >= 30 ? 'text-success/70' : margenReal >= 0 ? 'text-warning/70' : 'text-danger/70'">(Precio − Costo) / Precio</p>
+        </div>
+      </div>
+
+      <!-- Margen por receta (teórico) -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div class="bg-white rounded-2xl border border-sand-200/60 p-5">
-          <p class="text-[11px] text-sand-300 uppercase tracking-wider font-medium">Margen promedio</p>
+          <p class="text-[11px] text-sand-300 uppercase tracking-wider font-medium">Margen promedio (teórico)</p>
           <p class="text-[22px] font-bold text-brand-950 mt-1">{{ formatPercent(margenPromedio) }}</p>
         </div>
         <div class="bg-white rounded-2xl border border-sand-200/60 p-5">
@@ -96,7 +128,7 @@ const menosRentable = computed(() => recetasConMargen.value[recetasConMargen.val
       <!-- Tabla de recetas -->
       <div class="bg-white rounded-2xl border border-sand-200/60 overflow-hidden">
         <div class="px-5 py-4 border-b border-sand-100">
-          <h3 class="text-[14px] font-semibold text-brand-950">Rentabilidad por receta</h3>
+          <h3 class="text-[14px] font-semibold text-brand-950">Rentabilidad por receta (teórica)</h3>
         </div>
         <div class="overflow-x-auto">
           <table class="w-full text-[13px]">

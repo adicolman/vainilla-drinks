@@ -18,6 +18,7 @@ type CompraConDetalle = {
 }
 type ProduccionRow = Database['public']['Tables']['produccion']['Row']
 type MovimientoRow = Database['public']['Tables']['movimientos_stock']['Row']
+type VentaRow = Database['public']['Tables']['ventas']['Row']
 
 export function useReportes() {
   const client = useSupabaseClient<Database>()
@@ -28,17 +29,19 @@ export function useReportes() {
   const compras = ref<CompraConDetalle[]>([])
   const produccion = ref<ProduccionRow[]>([])
   const movimientos = ref<MovimientoRow[]>([])
+  const ventas = ref<VentaRow[]>([])
   const isLoading = ref(false)
 
   async function fetchAll() {
     isLoading.value = true
     const orgId = profile.value?.organization_id
 
-    const [insumosRes, comprasRes, prodRes, movRes] = await Promise.all([
+    const [insumosRes, comprasRes, prodRes, movRes, ventasRes] = await Promise.all([
       client.from('insumos').select('*').eq('activo', true).order('nombre'),
       client.from('compras').select('*, compra_items(*, insumo:insumos(id, nombre, categoria))').order('fecha', { ascending: false }),
       client.from('produccion').select('*').order('fecha', { ascending: false }),
       client.from('movimientos_stock').select('*').order('created_at', { ascending: false }).limit(200),
+      client.from('ventas').select('*').order('fecha', { ascending: false }),
     ])
 
     isLoading.value = false
@@ -54,6 +57,9 @@ export function useReportes() {
 
     if (movRes.error) addToast('error', 'Error al cargar movimientos', movRes.error.message)
     else movimientos.value = movRes.data || []
+
+    if (ventasRes.error) addToast('error', 'Error al cargar ventas', ventasRes.error.message)
+    else ventas.value = (ventasRes.data || []) as VentaRow[]
   }
 
   // ── Costos ──
@@ -180,12 +186,62 @@ export function useReportes() {
     movimientos.value.slice(0, 50)
   )
 
+  // ── Rentabilidad real ──
+
+  const totalVentas = computed(() =>
+    ventas.value
+      .filter(v => v.estado !== 'cancelado')
+      .reduce((sum, v) => sum + Number(v.total), 0)
+  )
+
+  const totalCostosVentas = computed(() =>
+    ventas.value
+      .filter(v => v.estado !== 'cancelado')
+      .reduce((sum, v) => sum + Number(v.costo_total_historico), 0)
+  )
+
+  const beneficioNeto = computed(() => totalVentas.value - totalCostosVentas.value)
+
+  const margenReal = computed(() => {
+    if (totalVentas.value <= 0) return 0
+    return (beneficioNeto.value / totalVentas.value) * 100
+  })
+
+  const totalCompras = computed(() =>
+    compras.value
+      .filter(c => c.estado !== 'cancelado')
+      .reduce((sum, c) => sum + Number(c.total), 0)
+  )
+
+  const ventasPorMes = computed(() => {
+    const map = new Map<string, number>()
+    ventas.value
+      .filter(v => v.estado !== 'cancelado')
+      .forEach(v => {
+        const mes = v.fecha?.substring(0, 7) || 'Sin fecha'
+        map.set(mes, (map.get(mes) || 0) + Number(v.total))
+      })
+    return Array.from(map.entries())
+      .map(([mes, total]) => ({ mes, total }))
+      .sort((a, b) => a.mes.localeCompare(b.mes))
+  })
+
+  const cantidadVentas = computed(() =>
+    ventas.value.filter(v => v.estado !== 'cancelado').length
+  )
+
+  const ticketPromedio = computed(() => {
+    if (cantidadVentas.value <= 0) return 0
+    return totalVentas.value / cantidadVentas.value
+  })
+
   return {
     isLoading,
     insumos,
     compras,
     produccion,
     movimientos,
+    ventas,
     fetchAll,
     // Costos
     valorTotalInventario,
@@ -203,5 +259,14 @@ export function useReportes() {
     stockEstado,
     insumosStock,
     movimientosRecientes,
+    // Rentabilidad real
+    totalVentas,
+    totalCostosVentas,
+    beneficioNeto,
+    margenReal,
+    totalCompras,
+    ventasPorMes,
+    cantidadVentas,
+    ticketPromedio,
   }
 }

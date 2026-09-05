@@ -4,6 +4,7 @@ type CompraRow = Database['public']['Tables']['compras']['Row']
 type CompraInsert = Database['public']['Tables']['compras']['Insert']
 type CompraItemInsert = Database['public']['Tables']['compra_items']['Insert']
 type MovimientoInsert = Database['public']['Tables']['movimientos_stock']['Insert']
+type MovimientoCajaInsert = Database['public']['Tables']['movimientos_caja']['Insert']
 type InsumoRow = Database['public']['Tables']['insumos']['Row']
 
 export type { CompraRow }
@@ -157,6 +158,21 @@ export function useCompras() {
         p_nuevo_costo: item.costo_unitario,
       })
     }
+
+    // Link to caja: insert egreso
+    const cajaData: MovimientoCajaInsert = {
+      organization_id: profile.value.organization_id,
+      usuario_id: profile.value.id,
+      tipo: 'egreso',
+      concepto: `Compra — ${proveedorNombre}`,
+      monto: total,
+      fecha: new Date().toISOString(),
+      referencia_tipo: 'compra',
+      referencia_id: newCompra.id,
+      estado: 'confirmado',
+    }
+
+    await client.from('movimientos_caja').insert(cajaData)
 
     addToast('success', 'Compra registrada', proveedorNombre)
     await fetchCompras()
