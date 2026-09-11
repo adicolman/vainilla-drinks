@@ -1,13 +1,27 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'default' })
+
+const showDrawer = ref(false)
+const { fetchGastos } = useGastos()
+
+onMounted(() => {
+  fetchGastos()
+})
+
+function handleSaved() {
+  fetchGastos()
+}
 </script>
 
 <template>
   <div>
-    <EmptyState
-      icon="lucide:receipt"
-      title="Módulo de Gastos"
-      description="Próximamente podrás registrar y categorizar gastos operativos."
+    <GastosSummary />
+    <GastosList @create="showDrawer = true" />
+
+    <GastosDrawer
+      :open="showDrawer"
+      @close="showDrawer = false"
+      @saved="handleSaved"
     />
   </div>
 </template>
