@@ -2,12 +2,14 @@ import type { Database } from '~/types/database.types'
 
 type InsumoRow = Database['public']['Tables']['insumos']['Row']
 type CompraRow = Database['public']['Tables']['compras']['Row']
-type ProduccionRow = Database['public']['Tables']['produccion']['Row']
+type VentaRow = Database['public']['Tables']['ventas']['Row']
+type MovimientoCajaRow = Database['public']['Tables']['movimientos_caja']['Row']
+type GastoRow = Database['public']['Tables']['movimientos_gasto']['Row']
 
 interface EventoNegocio {
   id: string
   concepto: string
-  categoria: 'Compra' | 'Producción'
+  categoria: 'Compra' | 'Venta' | 'Gasto' | 'Caja'
   fecha: string
   monto: number
   tipo: 'ingreso' | 'egreso'
@@ -20,15 +22,19 @@ export function useDashboard() {
   const isLoading = useState('dashboard-loading', () => false)
   const insumos = useState<InsumoRow[]>('dashboard-insumos', () => [])
   const compras = useState<CompraRow[]>('dashboard-compras', () => [])
-  const produccion = useState<(ProduccionRow & { receta: { nombre: string } | null })[]>('dashboard-produccion', () => [])
+  const ventas = useState<VentaRow[]>('dashboard-ventas', () => [])
+  const cajaMovimientos = useState<MovimientoCajaRow[]>('dashboard-caja', () => [])
+  const gastos = useState<GastoRow[]>('dashboard-gastos', () => [])
 
   async function fetchAll() {
     isLoading.value = true
 
-    const [insumosRes, comprasRes, produccionRes] = await Promise.all([
+    const [insumosRes, comprasRes, ventasRes, cajaRes, gastosRes] = await Promise.all([
       client.from('insumos').select('*').eq('activo', true),
       client.from('compras').select('*').eq('estado', 'recibido').order('fecha', { ascending: false }),
-      client.from('produccion').select('*, receta:recetas(nombre)').order('fecha', { ascending: false }).limit(50),
+      client.from('ventas').select('*').eq('estado', 'pagado').order('fecha', { ascending: false }).limit(50),
+      client.from('movimientos_caja').select('*').order('fecha', { ascending: false }).limit(50),
+      client.from('movimientos_gasto').select('*').order('fecha', { ascending: false }).limit(50),
     ])
 
     isLoading.value = false
@@ -39,8 +45,14 @@ export function useDashboard() {
     if (comprasRes.error) addToast('error', 'Error al cargar compras', comprasRes.error.message)
     else compras.value = comprasRes.data || []
 
-    if (produccionRes.error) addToast('error', 'Error al cargar producción', produccionRes.error.message)
-    else produccion.value = (produccionRes.data || []) as unknown as (ProduccionRow & { receta: { nombre: string } | null })[]
+    if (ventasRes.error) addToast('error', 'Error al cargar ventas', ventasRes.error.message)
+    else ventas.value = (ventasRes.data || []) as unknown as VentaRow[]
+
+    if (cajaRes.error) addToast('error', 'Error al cargar caja', cajaRes.error.message)
+    else cajaMovimientos.value = (cajaRes.data || []) as unknown as MovimientoCajaRow[]
+
+    if (gastosRes.error) addToast('error', 'Error al cargar gastos', gastosRes.error.message)
+    else gastos.value = (gastosRes.data || []) as unknown as GastoRow[]
   }
 
   const hoy = new Date()
@@ -80,6 +92,45 @@ export function useDashboard() {
     insumos.value.filter(i => Number(i.stock_actual) < Number(i.stock_minimo)).length
   )
 
+  const ventasEsteMes = computed(() =>
+    ventas.value
+      .filter(v => esDelMes(v.fecha, mesActual, anioActual))
+      .reduce((sum, v) => sum + Number(v.total), 0)
+  )
+
+  const ventasMesAnterior = computed(() =>
+    ventas.value
+      .filter(v => esDelMes(v.fecha, mesAnteriorDate.getMonth(), mesAnteriorDate.getFullYear()))
+      .reduce((sum, v) => sum + Number(v.total), 0)
+  )
+
+  const variacionVentas = computed(() => {
+    if (ventasMesAnterior.value === 0) return ventasEsteMes.value > 0 ? 100 : 0
+    return ((ventasEsteMes.value - ventasMesAnterior.value) / ventasMesAnterior.value) * 100
+  })
+
+  const gastosEsteMes = computed(() =>
+    gastos.value
+      .filter(g => esDelMes(g.fecha, mesActual, anioActual))
+      .reduce((sum, g) => sum + Number(g.monto), 0)
+  )
+
+  const cajaSaldo = computed(() =>
+    cajaMovimientos.value.reduce((sum, m) => sum + (m.tipo === 'ingreso' ? Number(m.monto) : -Number(m.monto)), 0)
+  )
+
+  const cajaIngresosMes = computed(() =>
+    cajaMovimientos.value
+      .filter(m => m.tipo === 'ingreso' && esDelMes(m.fecha, mesActual, anioActual))
+      .reduce((sum, m) => sum + Number(m.monto), 0)
+  )
+
+  const cajaEgresosMes = computed(() =>
+    cajaMovimientos.value
+      .filter(m => m.tipo === 'egreso' && esDelMes(m.fecha, mesActual, anioActual))
+      .reduce((sum, m) => sum + Number(m.monto), 0)
+  )
+
   // ── Gráfico: compras por semana del mes actual ──
 
   const comprasPorSemana = computed(() => {
@@ -100,7 +151,7 @@ export function useDashboard() {
     }
   })
 
-  // ── Eventos de negocio (compras + producción combinados) ──
+  // ── Eventos de negocio (compras + ventas + gastos + caja) ──
 
   const eventosRecientes = computed<EventoNegocio[]>(() => {
     const eventosCompras: EventoNegocio[] = compras.value.map(c => ({
@@ -112,16 +163,36 @@ export function useDashboard() {
       tipo: 'egreso',
     }))
 
-    const eventosProduccion: EventoNegocio[] = produccion.value.map(p => ({
-      id: `produccion-${p.id}`,
-      concepto: `Producción: ${p.receta?.nombre || 'receta'}`,
-      categoria: 'Producción',
-      fecha: p.fecha,
-      monto: Number(p.costo_total),
+    const eventosVentas: EventoNegocio[] = ventas.value.map(v => ({
+      id: `venta-${v.id}`,
+      concepto: `Venta $${Number(v.total).toLocaleString('es-AR')}`,
+      categoria: 'Venta',
+      fecha: v.fecha,
+      monto: Number(v.total),
+      tipo: 'ingreso',
+    }))
+
+    const eventosGastos: EventoNegocio[] = gastos.value.map(g => ({
+      id: `gasto-${g.id}`,
+      concepto: `Gasto: ${g.concepto}`,
+      categoria: 'Gasto',
+      fecha: g.fecha,
+      monto: Number(g.monto),
       tipo: 'egreso',
     }))
 
-    return [...eventosCompras, ...eventosProduccion]
+    const eventosCaja: EventoNegocio[] = cajaMovimientos.value
+      .filter(m => !['venta', 'compra', 'gasto'].includes(m.referencia_tipo || ''))
+      .map(m => ({
+        id: `caja-${m.id}`,
+        concepto: m.concepto,
+        categoria: 'Caja',
+        fecha: m.fecha,
+        monto: Number(m.monto),
+        tipo: m.tipo as 'ingreso' | 'egreso',
+      }))
+
+    return [...eventosCompras, ...eventosVentas, ...eventosGastos, ...eventosCaja]
       .sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime())
   })
 
@@ -149,6 +220,13 @@ export function useDashboard() {
     comprasMesAnterior,
     variacionCompras,
     insumosStockBajo,
+    ventasEsteMes,
+    ventasMesAnterior,
+    variacionVentas,
+    gastosEsteMes,
+    cajaSaldo,
+    cajaIngresosMes,
+    cajaEgresosMes,
     comprasPorSemana,
     eventosRecientes,
     eventosHoy,

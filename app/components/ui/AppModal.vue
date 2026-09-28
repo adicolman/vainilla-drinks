@@ -41,14 +41,14 @@ onUnmounted(() => {
       <div v-if="open" class="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-brand-950/40 backdrop-blur-sm" @click="onBackdropClick" />
         <div :class="computedWidth" class="relative w-full bg-white rounded-2xl shadow-elevated border border-sand-200/60">
-          <div v-if="title" class="flex items-center justify-between px-6 py-4 border-b border-sand-200/40">
+          <div v-if="title" class="flex items-center justify-between px-6 py-4 border-b border-sand-200/30">
             <h2 class="text-lg font-semibold text-brand-950">{{ title }}</h2>
             <IconButton icon="lucide:x" size="sm" @click="emit('close')" />
           </div>
           <div class="p-6">
             <slot />
           </div>
-          <div v-if="$slots.footer" class="px-6 py-4 border-t border-sand-200/40 bg-sand-50/60 rounded-b-2xl">
+          <div v-if="$slots.footer" class="px-6 py-4 border-t border-sand-200/30 bg-sand-50/60 rounded-b-2xl">
             <slot name="footer" />
           </div>
         </div>

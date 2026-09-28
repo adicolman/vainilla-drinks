@@ -8,8 +8,8 @@ defineProps<{
 </script>
 
 <template>
-  <div class="bg-white rounded-2xl border border-sand-200/60 shadow-card overflow-hidden">
-    <div class="px-6 py-5 border-b border-sand-200/40">
+  <div class="bg-white rounded-2xl border border-sand-200/60 shadow-card overflow-hidden hover:shadow-neon-pink transition-shadow duration-300">
+    <div class="px-7 py-5 border-b border-sand-200/30">
       <div class="flex items-center justify-between">
         <div>
           <h3 class="text-[15px] font-bold text-brand-950">{{ title }}</h3>
@@ -18,13 +18,13 @@ defineProps<{
         <NuxtLink
           v-if="actionLabel && actionTo"
           :to="actionTo"
-          class="text-[12px] font-semibold text-brand-600 hover:text-brand-950 transition-colors"
+          class="text-[12px] font-semibold text-neon-pink hover:text-neon-pink/80 transition-colors"
         >
           {{ actionLabel }}
         </NuxtLink>
       </div>
     </div>
-    <div class="p-6">
+    <div class="p-7">
       <slot />
     </div>
   </div>

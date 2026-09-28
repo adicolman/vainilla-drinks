@@ -29,9 +29,9 @@ const maxCompraMes = computed(() =>
 </script>
 
 <template>
-  <div class="space-y-6">
+  <div class="space-y-7">
     <!-- Cards resumen -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
       <div class="bg-white rounded-2xl border border-sand-200/60 p-5">
         <p class="text-[11px] text-sand-300 uppercase tracking-wider font-medium">Total gastado</p>
         <p class="text-[22px] font-bold text-brand-950 mt-1">{{ formatCurrency(totalGastado) }}</p>

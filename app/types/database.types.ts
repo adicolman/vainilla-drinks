@@ -16,8 +16,8 @@ export type Json =
 // ENUMS
 // =============================================================================
 
-export type UnidadMedida = 'ml' | 'l' | 'kg' | 'unidad'
-export type TipoMovimientoStock = 'compra' | 'produccion' | 'venta' | 'merma' | 'ajuste' | 'devolucion'
+export type UnidadMedida = 'ml' | 'l' | 'g' | 'kg' | 'unidad'
+export type TipoMovimientoStock = 'compra' | 'produccion' | 'venta' | 'merma' | 'ajuste' | 'devolucion' | 'consumo_diario'
 export type EstadoVenta = 'pendiente' | 'pagado' | 'preparando' | 'entregado' | 'cancelado'
 export type CategoriaGasto = 'publicidad' | 'servicios' | 'delivery' | 'equipamiento' | 'mantenimiento' | 'logistica' | 'impuestos' | 'otros'
 export type MedioPago = 'efectivo' | 'transferencia' | 'tarjeta' | 'mp'
@@ -147,6 +147,7 @@ export type Database = {
           stock_minimo: number
           proveedor_principal_id: string | null
           activo: boolean
+          imagen_url: string | null
           created_at: string
           updated_at: string
         }
@@ -163,6 +164,7 @@ export type Database = {
           stock_minimo?: number
           proveedor_principal_id?: string | null
           activo?: boolean
+          imagen_url?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -179,6 +181,7 @@ export type Database = {
           stock_minimo?: number
           proveedor_principal_id?: string | null
           activo?: boolean
+          imagen_url?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -193,6 +196,7 @@ export type Database = {
           categoria: string
           precio_venta: number
           margen_objetivo: number
+          imagen_url: string | null
           activo: boolean
           created_at: string
           updated_at: string
@@ -205,6 +209,7 @@ export type Database = {
           categoria?: string
           precio_venta?: number
           margen_objetivo?: number
+          imagen_url?: string | null
           activo?: boolean
           created_at?: string
           updated_at?: string
@@ -217,6 +222,7 @@ export type Database = {
           categoria?: string
           precio_venta?: number
           margen_objetivo?: number
+          imagen_url?: string | null
           activo?: boolean
           created_at?: string
           updated_at?: string
@@ -230,6 +236,9 @@ export type Database = {
           insumo_id: string
           cantidad_para_1_litro: number
           unidad: UnidadMedida
+          es_nota: boolean
+          unidad_receta: string | null
+          factor_conversion: number
           created_at: string
         }
         Insert: {
@@ -238,6 +247,9 @@ export type Database = {
           insumo_id: string
           cantidad_para_1_litro: number
           unidad: UnidadMedida
+          es_nota?: boolean
+          unidad_receta?: string | null
+          factor_conversion?: number
           created_at?: string
         }
         Update: {
@@ -246,6 +258,9 @@ export type Database = {
           insumo_id?: string
           cantidad_para_1_litro?: number
           unidad?: UnidadMedida
+          es_nota?: boolean
+          unidad_receta?: string | null
+          factor_conversion?: number
           created_at?: string
         }
         Relationships: []
@@ -426,75 +441,6 @@ export type Database = {
         }
         Relationships: []
       }
-      produccion: {
-        Row: {
-          id: string
-          organization_id: string
-          usuario_id: string
-          receta_id: string
-          fecha: string
-          cantidad_producida: number
-          unidad: UnidadMedida
-          costo_total: number
-          notas: string
-          created_at: string
-        }
-        Insert: {
-          id?: string
-          organization_id: string
-          usuario_id: string
-          receta_id: string
-          fecha?: string
-          cantidad_producida: number
-          unidad?: UnidadMedida
-          costo_total?: number
-          notas?: string
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          organization_id?: string
-          usuario_id?: string
-          receta_id?: string
-          fecha?: string
-          cantidad_producida?: number
-          unidad?: UnidadMedida
-          costo_total?: number
-          notas?: string
-          created_at?: string
-        }
-        Relationships: []
-      }
-      produccion_detalles: {
-        Row: {
-          id: string
-          produccion_id: string
-          insumo_id: string
-          cantidad_consumida: number
-          unidad: UnidadMedida
-          costo_unitario: number
-          created_at: string
-        }
-        Insert: {
-          id?: string
-          produccion_id: string
-          insumo_id: string
-          cantidad_consumida: number
-          unidad: UnidadMedida
-          costo_unitario?: number
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          produccion_id?: string
-          insumo_id?: string
-          cantidad_consumida?: number
-          unidad?: UnidadMedida
-          costo_unitario?: number
-          created_at?: string
-        }
-        Relationships: []
-      }
       movimientos_gasto: {
         Row: {
           id: string
@@ -638,16 +584,15 @@ export type Database = {
         }
         Returns: number
       }
-      registrar_produccion: {
+      registrar_stock_por_venta: {
         Args: {
           p_organization_id: string
           p_usuario_id: string
+          p_venta_id: string
           p_receta_id: string
-          p_cantidad_producida: number
-          p_unidad: UnidadMedida
-          p_notas?: string
+          p_cantidad_vendida: number
         }
-        Returns: string
+        Returns: undefined
       }
       eliminar_insumo: {
         Args: { p_insumo_id: string }

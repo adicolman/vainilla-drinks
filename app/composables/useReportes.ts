@@ -16,7 +16,6 @@ type CompraConDetalle = {
     insumo: { id: string; nombre: string; categoria: string } | null
   }[]
 }
-type ProduccionRow = Database['public']['Tables']['produccion']['Row']
 type MovimientoRow = Database['public']['Tables']['movimientos_stock']['Row']
 type VentaRow = Database['public']['Tables']['ventas']['Row']
 
@@ -27,7 +26,6 @@ export function useReportes() {
 
   const insumos = ref<InsumoRow[]>([])
   const compras = ref<CompraConDetalle[]>([])
-  const produccion = ref<ProduccionRow[]>([])
   const movimientos = ref<MovimientoRow[]>([])
   const ventas = ref<VentaRow[]>([])
   const isLoading = ref(false)
@@ -36,10 +34,9 @@ export function useReportes() {
     isLoading.value = true
     const orgId = profile.value?.organization_id
 
-    const [insumosRes, comprasRes, prodRes, movRes, ventasRes] = await Promise.all([
+    const [insumosRes, comprasRes, movRes, ventasRes] = await Promise.all([
       client.from('insumos').select('*').eq('activo', true).order('nombre'),
       client.from('compras').select('*, compra_items(*, insumo:insumos(id, nombre, categoria))').order('fecha', { ascending: false }),
-      client.from('produccion').select('*').order('fecha', { ascending: false }),
       client.from('movimientos_stock').select('*').order('created_at', { ascending: false }).limit(200),
       client.from('ventas').select('*').order('fecha', { ascending: false }),
     ])
@@ -51,9 +48,6 @@ export function useReportes() {
 
     if (comprasRes.error) addToast('error', 'Error al cargar compras', comprasRes.error.message)
     else compras.value = (comprasRes.data || []) as unknown as CompraConDetalle[]
-
-    if (prodRes.error) addToast('error', 'Error al cargar producciones', prodRes.error.message)
-    else produccion.value = prodRes.data || []
 
     if (movRes.error) addToast('error', 'Error al cargar movimientos', movRes.error.message)
     else movimientos.value = movRes.data || []
@@ -139,16 +133,6 @@ export function useReportes() {
       .map(([categoria, total]) => ({ categoria, total }))
       .sort((a, b) => b.total - a.total)
   })
-
-  // ── Producción ──
-
-  const totalProducido = computed(() =>
-    produccion.value.reduce((sum, p) => sum + Number(p.cantidad_producida), 0)
-  )
-
-  const costoTotalProduccion = computed(() =>
-    produccion.value.reduce((sum, p) => sum + Number(p.costo_total), 0)
-  )
 
   // ── Stock ──
 
@@ -239,7 +223,6 @@ export function useReportes() {
     isLoading,
     insumos,
     compras,
-    produccion,
     movimientos,
     ventas,
     fetchAll,
@@ -252,9 +235,6 @@ export function useReportes() {
     comprasPorProveedor,
     comprasPorMes,
     gastoPorCategoriaInsumo,
-    // Producción
-    totalProducido,
-    costoTotalProduccion,
     // Stock
     stockEstado,
     insumosStock,

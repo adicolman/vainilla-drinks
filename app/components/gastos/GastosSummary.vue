@@ -29,9 +29,9 @@ const categoriaIcons: Record<string, string> = {
 </script>
 
 <template>
-  <div class="space-y-4 mb-6">
+  <div class="space-y-5 mb-8">
     <!-- Total general -->
-    <div class="bg-danger-soft rounded-2xl p-5">
+    <div class="bg-danger-soft rounded-2xl p-6">
       <div class="flex items-center justify-between">
         <div>
           <p class="text-[11px] font-semibold tracking-[0.15em] uppercase text-danger/70">Total gastos</p>
@@ -44,9 +44,9 @@ const categoriaIcons: Record<string, string> = {
     </div>
 
     <!-- Por categoría -->
-    <div v-if="resumen.categorias.length > 0" class="bg-white rounded-2xl border border-sand-200/60 p-5">
-      <h3 class="text-[13px] font-semibold text-brand-950 mb-4">Por categoría</h3>
-      <div class="space-y-3">
+    <div v-if="resumen.categorias.length > 0" class="bg-white rounded-2xl border border-sand-200/60 p-6">
+      <h3 class="text-[13px] font-semibold text-brand-950 mb-5">Por categoría</h3>
+      <div class="space-y-4">
         <div v-for="cat in resumen.categorias" :key="cat.nombre" class="flex items-center gap-3">
           <div class="w-8 h-8 rounded-lg bg-sand-100 flex items-center justify-center shrink-0">
             <Icon :name="categoriaIcons[cat.nombre] || 'lucide:tag'" class="w-4 h-4 text-brand-600" />

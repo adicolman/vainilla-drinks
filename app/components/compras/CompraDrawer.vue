@@ -158,7 +158,7 @@ async function handleSubmit() {
           <label class="text-sm font-medium text-brand-950">Items de la compra</label>
           <button
             type="button"
-            class="text-[12px] text-brand-600 hover:text-brand-950 font-medium transition-colors"
+            class="text-[12px] text-neon-pink hover:text-neon-pink/80 font-medium transition-colors"
             @click="addItem"
           >
             + Agregar item

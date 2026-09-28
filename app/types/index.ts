@@ -179,29 +179,6 @@ export interface MovimientoCaja {
   created_at: string
 }
 
-export interface Produccion {
-  id: string
-  organization_id: string
-  usuario_id: string
-  receta_id: string
-  fecha: string
-  cantidad_producida: number
-  unidad: UnidadMedida
-  costo_total: number
-  notas: string
-  created_at: string
-}
-
-export interface ProduccionDetalle {
-  id: string
-  produccion_id: string
-  insumo_id: string
-  cantidad_consumida: number
-  unidad: UnidadMedida
-  costo_unitario: number
-  created_at: string
-}
-
 export interface Categoria {
   id: string
   organization_id: string
@@ -215,9 +192,9 @@ export interface Categoria {
 // ENUMS
 // =============================================================================
 
-export type UnidadMedida = 'ml' | 'l' | 'kg' | 'unidad'
+export type UnidadMedida = 'ml' | 'l' | 'g' | 'kg' | 'unidad'
 
-export type TipoMovimientoStock = 'compra' | 'produccion' | 'venta' | 'merma' | 'ajuste' | 'devolucion'
+export type TipoMovimientoStock = 'compra' | 'produccion' | 'venta' | 'merma' | 'ajuste' | 'devolucion' | 'consumo_diario'
 
 export type EstadoVenta = 'pendiente' | 'pagado' | 'preparando' | 'entregado' | 'cancelado'
 

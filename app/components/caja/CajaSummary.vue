@@ -7,7 +7,7 @@ function formatCurrency(n: number) {
 </script>
 
 <template>
-  <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+  <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-8">
     <div class="bg-white rounded-2xl border border-sand-200/60 p-5">
       <div class="flex items-center justify-between mb-3">
         <span class="text-[11px] font-semibold tracking-[0.15em] uppercase text-sand-400">Ingresos hoy</span>

@@ -104,7 +104,7 @@ async function confirmDelete() {
         <div class="flex items-center justify-end gap-3">
           <SecondaryButton @click="showDeactivateConfirm = false">Cancelar</SecondaryButton>
           <button
-            class="inline-flex items-center gap-2 px-5 py-2.5 bg-danger text-white text-sm font-semibold rounded-xl hover:bg-danger/90 transition-colors"
+            class="inline-flex items-center gap-2 px-5 py-2.5 bg-danger text-white text-sm font-semibold rounded-lg hover:bg-danger/90 transition-colors"
             @click="confirmDeactivate"
           >
             Desactivar
@@ -129,7 +129,7 @@ async function confirmDelete() {
           ¿Segurás que querés eliminar <strong class="text-brand-950">{{ insumoToDelete?.nombre }}</strong>?
         </p>
         <p class="text-[12px] text-sand-400 mb-6">
-          Se eliminarán todos los registros asociados: movimientos de stock, items de compra, ingredientes de recetas y detalles de producción.
+          Se eliminarán todos los registros asociados: movimientos de stock, items de compra e ingredientes de recetas.
         </p>
         <div class="flex items-center justify-end gap-3">
           <SecondaryButton @click="showDeleteConfirm = false">Cancelar</SecondaryButton>

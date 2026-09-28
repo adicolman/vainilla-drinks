@@ -25,7 +25,7 @@ function isActive(to: string) {
 <template>
   <nav
     v-if="isMobile"
-    class="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-xl border-t border-sand-200/50 px-1 pb-[env(safe-area-inset-bottom)]"
+    class="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-xl border-t border-sand-200/30 px-1 pb-[env(safe-area-inset-bottom)]"
   >
     <ul class="flex items-center justify-around">
       <li v-for="item in navItems" :key="item.to">

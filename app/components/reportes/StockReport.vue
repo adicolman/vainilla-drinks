@@ -6,7 +6,7 @@ const filterTipo = ref('')
 const tipoOptions = [
   { value: '', label: 'Todos' },
   { value: 'compra', label: 'Compras' },
-  { value: 'produccion', label: 'Producción' },
+  { value: 'venta', label: 'Ventas' },
   { value: 'ajuste', label: 'Ajustes' },
 ]
 
@@ -67,9 +67,9 @@ const valorTotalStock = computed(() =>
 </script>
 
 <template>
-  <div class="space-y-6">
+  <div class="space-y-7">
     <!-- Cards resumen -->
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-5">
       <div class="bg-white rounded-2xl border border-sand-200/60 p-5">
         <p class="text-[11px] text-sand-300 uppercase tracking-wider font-medium">Valor total stock</p>
         <p class="text-[20px] font-bold text-brand-950 mt-1">{{ formatCurrency(valorTotalStock) }}</p>
@@ -90,7 +90,7 @@ const valorTotalStock = computed(() =>
 
     <!-- Tabla stock actual -->
     <div class="bg-white rounded-2xl border border-sand-200/60 overflow-hidden">
-      <div class="px-5 py-4 border-b border-sand-100">
+      <div class="px-5 py-4 border-b border-sand-200/30">
         <h3 class="text-[14px] font-semibold text-brand-950">Stock actual</h3>
       </div>
       <div class="overflow-x-auto">
@@ -126,7 +126,7 @@ const valorTotalStock = computed(() =>
 
     <!-- Historial de movimientos -->
     <div class="bg-white rounded-2xl border border-sand-200/60 overflow-hidden">
-      <div class="px-5 py-4 border-b border-sand-100 flex items-center justify-between">
+      <div class="px-5 py-4 border-b border-sand-200/30 flex items-center justify-between">
         <h3 class="text-[14px] font-semibold text-brand-950">Historial de movimientos</h3>
         <AppSelect v-model="filterTipo" :options="tipoOptions" class="w-36" />
       </div>

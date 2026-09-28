@@ -16,7 +16,7 @@ onMounted(() => fetchAll())
 </script>
 
 <template>
-  <div class="space-y-6">
+  <div class="space-y-7">
     <!-- Header -->
     <div>
       <h1 class="text-[22px] font-bold text-brand-950 tracking-tight">Reportes</h1>
@@ -24,7 +24,7 @@ onMounted(() => fetchAll())
     </div>
 
     <!-- Tabs -->
-    <div class="border-b border-sand-200/60">
+    <div class="border-b border-sand-200/30">
       <div class="flex gap-1 overflow-x-auto">
         <button
           v-for="tab in tabs"

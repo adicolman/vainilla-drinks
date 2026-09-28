@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { formatCurrency, formatPercent, formatVariation } from '~/utils/formatting'
 
-const { valorInventario, comprasEsteMes, variacionCompras, insumosStockBajo } = useDashboard()
+const { valorInventario, comprasEsteMes, variacionCompras, ventasEsteMes, variacionVentas, cajaSaldo, gastosEsteMes, insumosStockBajo } = useDashboard()
 
 const cards = computed(() => [
   {
@@ -20,16 +20,36 @@ const cards = computed(() => [
     trend: variacionCompras.value > 0 ? 'up' as const : variacionCompras.value < 0 ? 'down' as const : 'neutral' as const,
     variation: variacionCompras.value,
   },
+  {
+    label: 'Ventas del mes',
+    value: ventasEsteMes.value,
+    format: 'currency' as const,
+    icon: 'lucide:trending-up',
+    trend: variacionVentas.value > 0 ? 'up' as const : variacionVentas.value < 0 ? 'down' as const : 'neutral' as const,
+    variation: variacionVentas.value,
+  },
+  {
+    label: 'Saldo caja',
+    value: cajaSaldo.value,
+    format: 'currency' as const,
+    icon: 'lucide:wallet',
+    trend: cajaSaldo.value >= 0 ? 'neutral' as const : 'down' as const,
+    variation: null,
+  },
 ])
 
 const iconMap: Record<string, string> = {
   'Valor de inventario': 'lucide:package',
   'Compras del mes': 'lucide:shopping-cart',
+  'Ventas del mes': 'lucide:trending-up',
+  'Saldo caja': 'lucide:wallet',
 }
 
 const colorMap: Record<string, { bg: string, icon: string }> = {
   'Valor de inventario': { bg: 'bg-brand-600/8', icon: 'text-brand-600' },
   'Compras del mes': { bg: 'bg-vanilla/20', icon: 'text-amber-600' },
+  'Ventas del mes': { bg: 'bg-success/10', icon: 'text-success' },
+  'Saldo caja': { bg: 'bg-brand-600/10', icon: 'text-brand-600' },
 }
 
 function formatValue(value: number, format: string): string {
@@ -42,11 +62,12 @@ function formatValue(value: number, format: string): string {
 </script>
 
 <template>
-  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+  <div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
     <div
       v-for="metric in cards"
       :key="metric.label"
-      class="bg-white rounded-2xl border border-sand-200/60 p-4 shadow-card hover:shadow-elevated transition-all duration-300 group"
+      class="bg-white rounded-2xl border border-sand-200/60 p-5 shadow-card hover:shadow-elevated transition-all duration-300 group"
     >
       <div class="flex items-start justify-between mb-2">
         <div :class="colorMap[metric.label]?.bg" class="w-9 h-9 rounded-xl flex items-center justify-center">
@@ -63,7 +84,7 @@ function formatValue(value: number, format: string): string {
               : metric.trend === 'down' ? 'text-success bg-success-soft'
                 : 'text-sand-400 bg-sand-100'
           ]"
-          class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold"
+          class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold"
         >
           <Icon
             :name="metric.trend === 'up' ? 'lucide:arrow-up' : metric.trend === 'down' ? 'lucide:arrow-down' : 'lucide:minus'"
@@ -81,6 +102,11 @@ function formatValue(value: number, format: string): string {
           {{ formatValue(metric.value, metric.format) }}
         </span>
       </div>
+    </div>
+    </div>
+    <div v-if="insumosStockBajo > 0" class="mt-4 flex items-center gap-2 text-[12px] font-medium text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-4 py-2.5">
+      <Icon name="lucide:alert-triangle" class="w-4 h-4 shrink-0" />
+      <span>{{ insumosStockBajo }} insumo{{ insumosStockBajo > 1 ? 's' : '' }} con stock bajo — <NuxtLink to="/inventario" class="underline">revisar</NuxtLink></span>
     </div>
   </div>
 </template>

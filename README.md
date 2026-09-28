@@ -1,6 +1,6 @@
 # Vainilla Drinks
 
-App de gestión interna para una marca de cócteles/bebidas: inventario de insumos, recetas con cálculo de costos y márgenes, registro de compras, producción de lotes y reportes de rentabilidad.
+App de gestión interna para una marca de cócteles/bebidas: inventario de insumos, recetas con cálculo de costos y márgenes, registro de compras y reportes de rentabilidad.
 
 No es una app de venta al público — es una herramienta de back-office (multi-usuario, mono-organización).
 
@@ -92,7 +92,6 @@ app/
 │   ├── inventario/       componentes de insumos
 │   ├── recetas/
 │   ├── compras/
-│   ├── produccion/
 │   ├── reportes/
 │   ├── dashboard/
 │   ├── layout/           header, sidebar
@@ -116,7 +115,6 @@ supabase/
 |---|---|
 | Inventario (insumos) | ✅ Completo |
 | Recetas | ✅ Completo |
-| Producción | ✅ Completo |
 | Compras | ✅ Completo |
 | Reportes | ✅ Completo |
 | Configuración (categorías) | ✅ Completo |

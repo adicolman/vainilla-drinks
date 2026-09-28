@@ -20,7 +20,6 @@ const mainNav: NavGroup[] = [
       { label: 'Dashboard', icon: 'lucide:layout-dashboard', to: '/dashboard' },
       { label: 'Ventas', icon: 'lucide:shopping-cart', to: '/ventas' },
       { label: 'Recetas', icon: 'lucide:chef-hat', to: '/recetas' },
-      { label: 'Producción', icon: 'lucide:flask-conical', to: '/produccion' },
       { label: 'Inventario', icon: 'lucide:package', to: '/inventario' },
       { label: 'Compras', icon: 'lucide:truck', to: '/compras' },
     ],
@@ -36,6 +35,7 @@ const mainNav: NavGroup[] = [
   {
     label: 'Herramientas',
     items: [
+      { label: 'Consumo diario', icon: 'lucide:scale', to: '/consumo-diario' },
       { label: 'Proveedores', icon: 'lucide:users', to: '/proveedores' },
       { label: 'Configuración', icon: 'lucide:settings', to: '/configuracion' },
     ],
@@ -55,7 +55,7 @@ function isActive(to: string) {
   <Transition name="overlay">
     <div
       v-if="isMobile && mobileMenuOpen"
-      class="fixed inset-0 bg-brand-950/50 backdrop-blur-sm z-40 lg:hidden"
+      class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
       @click="closeMobileMenu"
     />
   </Transition>
@@ -72,27 +72,40 @@ function isActive(to: string) {
           : 'opacity-0 pointer-events-none',
     ]"
     class="fixed top-3 left-3 bottom-3 z-50 w-[252px] flex flex-col rounded-2xl overflow-hidden transition-all duration-300 ease-in-out
-           bg-brand-950 text-white
-           border border-white/[0.08]"
+           bg-sidebar text-white
+           border border-white/[0.1]"
   >
     <!-- Brand -->
-    <div class="px-5 pt-6 pb-1">
-      <NuxtLink to="/dashboard" class="block" @click="closeMobileMenu">
-        <div class="flex items-center justify-center">
-          <span class="text-[17px] font-bold tracking-[0.16em] uppercase text-white">
+    <div class="px-5 pt-6 pb-1 flex items-center justify-between">
+      <NuxtLink to="/dashboard" class="block flex-1" @click="closeMobileMenu">
+        <div class="flex items-center">
+          <span class="text-[17px] font-bold tracking-[0.16em] uppercase text-neon-pink">
             Vainilla
           </span>
-          <span class="text-[17px] font-light tracking-[0.16em] uppercase text-brand-400 ml-1">
+          <span class="text-[17px] font-light tracking-[0.16em] uppercase text-white/40 ml-1">
             Drinks
           </span>
         </div>
       </NuxtLink>
+      <button
+        class="hidden lg:flex w-7 h-7 items-center justify-center rounded-md text-white/50 hover:text-white hover:bg-white/10 transition-colors shrink-0 ml-2"
+        title="Cerrar barra"
+        @click="toggleSidebar"
+      >
+        <Icon name="lucide:panel-left-close" class="w-[18px] h-[18px]" />
+      </button>
+      <button
+        class="lg:hidden w-7 h-7 flex items-center justify-center rounded-md text-white/50 hover:text-white hover:bg-white/10 transition-colors shrink-0 ml-2"
+        @click="closeMobileMenu"
+      >
+        <Icon name="lucide:x" class="w-[18px] h-[18px]" />
+      </button>
     </div>
 
     <!-- Main Navigation -->
     <nav class="flex-1 overflow-y-auto px-3 pt-4 pb-2">
       <div v-for="(group, gi) in mainNav" :key="group.label" :class="gi > 0 ? 'mt-6' : ''">
-        <p class="px-4 mb-2 text-[10px] font-semibold tracking-[0.20em] uppercase text-brand-400/35">
+        <p class="px-4 mb-2 text-[10px] font-semibold tracking-[0.20em] uppercase text-white/25">
           {{ group.label }}
         </p>
         <ul class="space-y-0.5">
@@ -101,15 +114,15 @@ function isActive(to: string) {
               :to="item.to"
               :class="[
                 isActive(item.to)
-                  ? 'bg-white/[0.08] text-white'
-                  : 'text-brand-400/60 hover:text-white/85 hover:bg-white/[0.03]',
+                  ? 'bg-neon-pink/15 text-white shadow-neon-pink'
+                  : 'text-white/45 hover:text-white/80 hover:bg-white/[0.04]',
               ]"
               class="group flex items-center gap-3 px-4 py-2 rounded-lg text-[13px] font-medium transition-all duration-150"
               @click="closeMobileMenu"
             >
               <Icon
                 :name="item.icon"
-                :class="isActive(item.to) ? 'text-white' : 'text-brand-400/50 group-hover:text-brand-400/80'"
+                :class="isActive(item.to) ? 'text-neon-pink' : 'text-white/35 group-hover:text-white/70'"
                 class="w-[17px] h-[17px] shrink-0 transition-colors duration-150"
               />
               <span>{{ item.label }}</span>
@@ -121,14 +134,14 @@ function isActive(to: string) {
 
     <!-- Bottom: Cerrar sesión -->
     <div class="px-3 pb-3 pt-2">
-      <div class="h-px bg-white/[0.06] mx-2 mb-2" />
+      <div class="h-px bg-white/[0.08] mx-2 mb-2" />
       <button
-        class="group flex items-center gap-3 px-4 py-2 rounded-lg text-[13px] font-medium text-brand-400/50 hover:text-white/85 hover:bg-white/[0.03] transition-all duration-150 w-full text-left"
+        class="group flex items-center gap-3 px-4 py-2 rounded-lg text-[13px] font-medium text-white/40 hover:text-white/80 hover:bg-white/[0.04] transition-all duration-150 w-full text-left"
         @click="logout(); closeMobileMenu()"
       >
         <Icon
           name="lucide:log-out"
-          class="w-[17px] h-[17px] shrink-0 text-brand-400/40 group-hover:text-brand-400/80 transition-colors duration-150"
+          class="w-[17px] h-[17px] shrink-0 text-white/30 group-hover:text-white/70 transition-colors duration-150"
         />
         <span>Cerrar sesión</span>
       </button>

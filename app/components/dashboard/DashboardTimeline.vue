@@ -12,20 +12,22 @@ const monthName = today.toLocaleDateString('es-AR', { month: 'long' })
 
 const colorByCategoria: Record<string, { dot: string; bg: string; text: string }> = {
   'Compra': { dot: 'bg-brand-600', bg: 'bg-brand-600/5', text: 'text-brand-700' },
-  'Producción': { dot: 'bg-success', bg: 'bg-success-soft', text: 'text-success' },
+  'Venta': { dot: 'bg-amber-500', bg: 'bg-amber-50', text: 'text-amber-700' },
+  'Gasto': { dot: 'bg-danger', bg: 'bg-danger-soft', text: 'text-danger' },
+  'Caja': { dot: 'bg-sand-400', bg: 'bg-sand-50', text: 'text-sand-600' },
 }
 </script>
 
 <template>
   <div class="bg-white rounded-2xl border border-sand-200/60 shadow-card overflow-hidden">
-    <div class="px-4 py-3 border-b border-sand-200/40">
+    <div class="px-5 py-4 border-b border-sand-200/30">
       <div class="flex items-center justify-between">
         <h3 class="text-[12px] font-bold text-brand-950 tracking-tight">Actividad de hoy</h3>
         <span class="text-[10px] font-semibold text-sand-400 capitalize">{{ dayName }}</span>
       </div>
       <p class="text-[10px] text-sand-400 mt-0.5 font-medium">{{ dayNumber }} de {{ monthName }}</p>
     </div>
-    <div class="px-4 py-3">
+    <div class="px-5 py-4">
       <div v-if="eventosHoy.length === 0" class="text-center py-6">
         <Icon name="lucide:calendar-check" class="w-7 h-7 text-sand-300 mx-auto mb-2" />
         <p class="text-[11px] text-sand-400">Sin movimientos registrados hoy</p>

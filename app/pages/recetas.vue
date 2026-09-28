@@ -10,8 +10,6 @@ const showDrawer = ref(false)
 const editingReceta = ref<RecetaConIngredientes | null>(null)
 const recetaToDeactivate = ref<RecetaConIngredientes | null>(null)
 const showDeactivateConfirm = ref(false)
-const showProduceDrawer = ref(false)
-const produceReceta = ref<RecetaConIngredientes | null>(null)
 
 onMounted(() => {
   fetchRecetas()
@@ -30,11 +28,6 @@ function openEdit(receta: RecetaConIngredientes) {
 function openDeactivate(receta: RecetaConIngredientes) {
   recetaToDeactivate.value = receta
   showDeactivateConfirm.value = true
-}
-
-function openProduce(receta: RecetaConIngredientes) {
-  produceReceta.value = receta
-  showProduceDrawer.value = true
 }
 
 async function confirmDeactivate() {
@@ -56,11 +49,6 @@ function handleDrawerClose() {
 function handleSaved() {
   fetchRecetas()
 }
-
-function handleProduceClose() {
-  showProduceDrawer.value = false
-  produceReceta.value = null
-}
 </script>
 
 <template>
@@ -69,20 +57,12 @@ function handleProduceClose() {
       @create="openCreate"
       @edit="openEdit"
       @deactivate="openDeactivate"
-      @produce="openProduce"
     />
 
     <RecetaDrawer
       :open="showDrawer"
       :receta="editingReceta"
       @close="handleDrawerClose"
-      @saved="handleSaved"
-    />
-
-    <ProduccionDrawer
-      :open="showProduceDrawer"
-      :receta="produceReceta"
-      @close="handleProduceClose"
       @saved="handleSaved"
     />
 

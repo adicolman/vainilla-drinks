@@ -13,9 +13,9 @@ const totalInsumos = computed(() => insumos.value.length)
 </script>
 
 <template>
-  <div class="space-y-6">
+  <div class="space-y-7">
     <!-- Cards resumen -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
       <div class="bg-white rounded-2xl border border-sand-200/60 p-5">
         <p class="text-[11px] text-sand-300 uppercase tracking-wider font-medium">Valor total inventario</p>
         <p class="text-[22px] font-bold text-brand-950 mt-1">{{ formatCurrency(valorTotalInventario) }}</p>
@@ -76,7 +76,7 @@ const totalInsumos = computed(() => insumos.value.length)
 
     <!-- Tabla de todos los insumos -->
     <div class="bg-white rounded-2xl border border-sand-200/60 overflow-hidden">
-      <div class="px-5 py-4 border-b border-sand-100">
+      <div class="px-5 py-4 border-b border-sand-200/30">
         <h3 class="text-[14px] font-semibold text-brand-950">Detalle de insumos</h3>
       </div>
       <div class="overflow-x-auto">

@@ -87,9 +87,22 @@ export function useRecetas() {
     }
   }
 
+  async function uploadImagen(file: File): Promise<string | null> {
+    if (!profile.value) return null
+    const ext = file.name.split('.').pop() || 'jpg'
+    const path = `${profile.value.organization_id}/${Date.now()}.${ext}`
+    const { error } = await client.storage.from('recetas').upload(path, file, { upsert: true })
+    if (error) {
+      addToast('error', 'Error al subir imagen', error.message)
+      return null
+    }
+    const { data } = client.storage.from('recetas').getPublicUrl(path)
+    return data.publicUrl
+  }
+
   async function createReceta(
-    data: { nombre: string; descripcion: string; categoria: string; precio_venta: number; margen_objetivo: number },
-    ingredientes: { insumo_id: string; cantidad_para_1_litro: number; unidad: string }[]
+    data: { nombre: string; descripcion: string; categoria: string; precio_venta: number; margen_objetivo: number; imagen_url?: string | null },
+    ingredientes: { insumo_id: string; cantidad_para_1_litro: number; unidad: string; es_nota: boolean; unidad_receta: string | null; factor_conversion: number }[]
   ) {
     if (!profile.value) throw new Error('No hay usuario autenticado')
 
@@ -100,6 +113,7 @@ export function useRecetas() {
       categoria: data.categoria || 'general',
       precio_venta: data.precio_venta,
       margen_objetivo: data.margen_objetivo,
+      imagen_url: data.imagen_url || null,
       activo: true,
     }
 
@@ -120,6 +134,9 @@ export function useRecetas() {
         insumo_id: ing.insumo_id,
         cantidad_para_1_litro: ing.cantidad_para_1_litro,
         unidad: ing.unidad as any,
+        es_nota: ing.es_nota || false,
+        unidad_receta: ing.unidad_receta || null,
+        factor_conversion: ing.factor_conversion || 1,
       }))
 
       const { error: ingError } = await client
@@ -138,8 +155,8 @@ export function useRecetas() {
 
   async function updateReceta(
     id: string,
-    data: { nombre: string; descripcion: string; categoria: string; precio_venta: number; margen_objetivo: number; activo: boolean },
-    ingredientes: { insumo_id: string; cantidad_para_1_litro: number; unidad: string }[]
+    data: { nombre: string; descripcion: string; categoria: string; precio_venta: number; margen_objetivo: number; activo: boolean; imagen_url?: string | null },
+    ingredientes: { insumo_id: string; cantidad_para_1_litro: number; unidad: string; es_nota: boolean; unidad_receta: string | null; factor_conversion: number }[]
   ) {
     const { error } = await client
       .from('recetas')
@@ -149,6 +166,7 @@ export function useRecetas() {
         categoria: data.categoria,
         precio_venta: data.precio_venta,
         margen_objetivo: data.margen_objetivo,
+        imagen_url: data.imagen_url,
         activo: data.activo,
       })
       .eq('id', id)
@@ -167,6 +185,9 @@ export function useRecetas() {
         insumo_id: ing.insumo_id,
         cantidad_para_1_litro: ing.cantidad_para_1_litro,
         unidad: ing.unidad as any,
+        es_nota: ing.es_nota || false,
+        unidad_receta: ing.unidad_receta || null,
+        factor_conversion: ing.factor_conversion || 1,
       }))
 
       await client.from('receta_ingredientes').insert(inserts)
@@ -202,6 +223,7 @@ export function useRecetas() {
     filteredRecetas,
     fetchRecetas,
     fetchInsumos,
+    uploadImagen,
     createReceta,
     updateReceta,
     deactivateReceta,

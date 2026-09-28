@@ -19,7 +19,7 @@ const { sidebarOpen, isMobile } = useAppLayout()
 
       <!-- Content -->
       <main class="flex-1 overflow-y-auto">
-        <div class="px-4 sm:px-6 lg:px-8 py-5 lg:py-7 pb-20 lg:pb-7">
+        <div class="px-5 sm:px-8 lg:px-10 py-6 lg:py-8 pb-20 lg:pb-8">
           <slot />
         </div>
       </main>

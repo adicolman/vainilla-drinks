@@ -33,56 +33,38 @@ const estadoVariant: Record<string, string> = {
   cancelado: 'danger',
 }
 
-const medioPagoLabel: Record<string, string> = {
-  efectivo: 'Efectivo',
-  transferencia: 'Transferencia',
-  tarjeta: 'Tarjeta',
-  mp: 'Mercado Pago',
-}
-
 const itemCount = computed(() => props.venta.venta_items?.length || 0)
+
+const emit = defineEmits<{
+  edit: [venta: VentaConDetalle]
+}>()
 </script>
 
 <template>
-  <div class="bg-white rounded-2xl border border-sand-200/60 p-5 hover:shadow-card transition-all duration-200">
-    <div class="flex items-start justify-between mb-3">
-      <div class="flex-1 min-w-0">
-        <h3 class="text-[15px] font-semibold text-brand-950 truncate">
-          {{ venta.venta_items?.[0]?.receta?.nombre || 'Venta' }}
-          <span v-if="itemCount > 1" class="text-sand-400 font-normal">+{{ itemCount - 1 }}</span>
-        </h3>
-        <p class="text-[12px] text-sand-400 mt-0.5">
-          {{ formatDate(venta.fecha) }} · {{ formatTime(venta.fecha) }}
-        </p>
+  <div
+    class="bg-white rounded-2xl border border-sand-200/60 overflow-hidden hover:shadow-elevated transition-all duration-200 flex flex-col cursor-pointer group"
+    @click="emit('edit', venta)"
+  >
+    <div class="px-5 pt-5 pb-4 flex items-start justify-between gap-3">
+      <div class="flex gap-3 min-w-0">
+        <div class="w-10 h-10 rounded-xl bg-success text-white flex items-center justify-center shrink-0">
+          <Icon name="lucide:shopping-bag" class="w-[18px] h-[18px]" />
+        </div>
+        <div class="min-w-0">
+          <h3 class="text-[14px] font-semibold text-brand-950 leading-tight truncate">
+            {{ venta.venta_items?.[0]?.receta?.nombre || 'Venta' }}
+            <span v-if="itemCount > 1" class="text-sand-400 font-normal">+{{ itemCount - 1 }}</span>
+          </h3>
+          <p class="text-[11px] text-sand-400 mt-0.5">{{ formatDate(venta.fecha) }} · {{ formatTime(venta.fecha) }}</p>
+        </div>
       </div>
-      <StatusBadge
-        :label="estadoLabel[venta.estado] || venta.estado"
-        :variant="(estadoVariant[venta.estado] || 'default') as any"
-      />
+      <StatusBadge :label="estadoLabel[venta.estado] || venta.estado" :variant="(estadoVariant[venta.estado] || 'default') as any" />
     </div>
 
-    <div class="grid grid-cols-2 gap-3 mb-3">
-      <div>
-        <p class="text-[11px] text-sand-300 uppercase tracking-wider font-medium">Total</p>
-        <p class="text-[14px] font-semibold text-success mt-0.5">
-          {{ formatCurrency(venta.total) }}
-        </p>
-      </div>
-      <div>
-        <p class="text-[11px] text-sand-300 uppercase tracking-wider font-medium">Pago</p>
-        <p class="text-[14px] font-semibold text-brand-950 mt-0.5">
-          {{ medioPagoLabel[venta.medio_pago] || venta.medio_pago }}
-        </p>
-      </div>
-    </div>
-
-    <div class="flex items-center justify-between">
-      <span class="text-[12px] text-sand-400">
-        {{ itemCount }} producto{{ itemCount !== 1 ? 's' : '' }}
-      </span>
-      <span v-if="Number(venta.costo_total_historico) > 0" class="text-[12px] text-sand-400">
-        Margen: {{ formatCurrency(venta.total - Number(venta.costo_total_historico)) }}
-      </span>
+    <div class="px-5 pb-5 flex items-center gap-4">
+      <span class="text-[15px] font-bold text-success">{{ formatCurrency(venta.total) }}</span>
+      <div class="w-px h-4 bg-sand-200" />
+      <span class="text-[12px] text-sand-400">{{ itemCount }} producto{{ itemCount !== 1 ? 's' : '' }}</span>
     </div>
   </div>
 </template>

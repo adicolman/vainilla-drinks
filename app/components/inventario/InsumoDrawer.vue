@@ -11,7 +11,7 @@ const emit = defineEmits<{
   saved: []
 }>()
 
-const { createInsumo, updateInsumo } = useInsumos()
+const { createInsumo, updateInsumo, uploadImagen } = useInsumos()
 const { getCategoriasPorTipo, fetchCategorias } = useCategorias()
 
 const isEditing = computed(() => !!props.insumo)
@@ -21,49 +21,73 @@ const categoriaOptions = getCategoriasPorTipo('insumo')
 const form = reactive({
   nombre: '',
   categoria: 'general',
-  unidad_medida: 'ml',
-  costo_unitario: 0,
+  unidad_medida: 'l',
+  precio_compra: 0,
+  contenido_por_unidad: 0,
   stock_inicial: 0,
   stock_minimo: 0,
-  cantidad_por_unidad: null as number | null,
   proveedor_principal_id: '',
   activo: true,
+  imagen_url: '' as string | null,
 })
 
 const errors = reactive({
   nombre: '',
-  costo_unitario: '',
-  stock_inicial: '',
+  precio_compra: '',
+  contenido_por_unidad: '',
   stock_minimo: '',
 })
 
 const isSaving = ref(false)
+const isUploading = ref(false)
+const fileInput = ref<HTMLInputElement | null>(null)
 
 const unidadOptions = [
   { value: 'ml', label: 'ml' },
-  { value: 'l', label: 'L' },
-  { value: 'kg', label: 'kg' },
+  { value: 'l', label: 'L (Litros)' },
+  { value: 'g', label: 'g (Gramos)' },
+  { value: 'kg', label: 'kg (Kilogramos)' },
   { value: 'unidad', label: 'Unidad' },
 ]
 
-const cantidadLabel = computed(() => {
+const contenidoLabel = computed(() => {
   const labels: Record<string, string> = {
-    ml: 'Cantidad por botella (ml)',
-    l: 'Cantidad por botella (L)',
-    kg: 'Cantidad por paquete (kg)',
+    ml: 'Contenido por envase (ml)',
+    l: 'Litros por envase',
+    g: 'Gramos por paquete',
+    kg: 'Kilogramos por paquete',
     unidad: 'Unidades por paquete',
   }
-  return labels[form.unidad_medida] || 'Cantidad por unidad de compra'
+  return labels[form.unidad_medida] || 'Contenido por envase'
 })
 
-const cantidadHelper = computed(() => {
+const contenidoHelper = computed(() => {
   const helpers: Record<string, string> = {
     ml: 'Ej: 750 para una botella de 750ml',
-    l: 'Ej: 1 para una botella de 1L',
+    l: 'Ej: 10 para un balde de 10L',
+    g: 'Ej: 500 para un paquete de 500g',
     kg: 'Ej: 2.5 para un paquete de 2.5kg',
     unidad: 'Ej: 100 para un paquete de 100 vasos',
   }
-  return helpers[form.unidad_medida] || 'Cuántas unidades base trae 1 unidad de compra'
+  return helpers[form.unidad_medida] || 'Cuántas unidades base trae 1 envase'
+})
+
+const costoPorUnidad = computed(() => {
+  if (form.contenido_por_unidad > 0 && form.precio_compra > 0) {
+    return form.precio_compra / form.contenido_por_unidad
+  }
+  return 0
+})
+
+const unidadLabel = computed(() => {
+  const labels: Record<string, string> = {
+    ml: 'ml',
+    l: 'litro',
+    g: 'g',
+    kg: 'kg',
+    unidad: 'unidad',
+  }
+  return labels[form.unidad_medida] || form.unidad_medida
 })
 
 watch(() => props.open, (val) => {
@@ -72,30 +96,32 @@ watch(() => props.open, (val) => {
     form.nombre = props.insumo.nombre
     form.categoria = props.insumo.categoria
     form.unidad_medida = props.insumo.unidad_medida
-    form.costo_unitario = Number(props.insumo.costo_unitario)
+    form.precio_compra = Number(props.insumo.costo_unitario) * (props.insumo.cantidad_por_unidad || 1)
+    form.contenido_por_unidad = props.insumo.cantidad_por_unidad != null ? Number(props.insumo.cantidad_por_unidad) : 0
     form.stock_inicial = 0
     form.stock_minimo = Number(props.insumo.stock_minimo)
-    form.cantidad_por_unidad = props.insumo.cantidad_por_unidad != null ? Number(props.insumo.cantidad_por_unidad) : null
     form.proveedor_principal_id = props.insumo.proveedor_principal_id || ''
     form.activo = props.insumo.activo
+    form.imagen_url = props.insumo.imagen_url || null
   } else if (val) {
     form.nombre = ''
     form.categoria = 'general'
-    form.unidad_medida = 'ml'
-    form.costo_unitario = 0
+    form.unidad_medida = 'l'
+    form.precio_compra = 0
+    form.contenido_por_unidad = 0
     form.stock_inicial = 0
     form.stock_minimo = 0
-    form.cantidad_por_unidad = null
     form.proveedor_principal_id = ''
     form.activo = true
+    form.imagen_url = null
   }
   clearErrors()
 })
 
 function clearErrors() {
   errors.nombre = ''
-  errors.costo_unitario = ''
-  errors.stock_inicial = ''
+  errors.precio_compra = ''
+  errors.contenido_por_unidad = ''
   errors.stock_minimo = ''
 }
 
@@ -108,13 +134,13 @@ function validate(): boolean {
     valid = false
   }
 
-  if (form.costo_unitario < 0) {
-    errors.costo_unitario = 'El costo no puede ser negativo'
+  if (form.precio_compra < 0) {
+    errors.precio_compra = 'El precio no puede ser negativo'
     valid = false
   }
 
-  if (!isEditing.value && form.stock_inicial < 0) {
-    errors.stock_inicial = 'El stock no puede ser negativo'
+  if (form.contenido_por_unidad < 0) {
+    errors.contenido_por_unidad = 'El contenido no puede ser negativo'
     valid = false
   }
 
@@ -124,6 +150,25 @@ function validate(): boolean {
   }
 
   return valid
+}
+
+async function handleImageUpload(event: Event) {
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0]
+  if (!file) return
+
+  isUploading.value = true
+  const url = await uploadImagen(file)
+  if (url) {
+    form.imagen_url = url
+  }
+  isUploading.value = false
+  input.value = ''
+}
+
+function removeImage() {
+  form.imagen_url = null
+  if (fileInput.value) fileInput.value.value = ''
 }
 
 async function handleSubmit() {
@@ -136,22 +181,24 @@ async function handleSubmit() {
         nombre: form.nombre.trim(),
         categoria: form.categoria,
         unidad_medida: form.unidad_medida,
-        costo_unitario: form.costo_unitario,
+        precio_compra: form.precio_compra,
+        contenido_por_unidad: form.contenido_por_unidad,
         stock_minimo: form.stock_minimo,
-        cantidad_por_unidad: form.cantidad_por_unidad,
         proveedor_principal_id: form.proveedor_principal_id || null,
         activo: form.activo,
+        imagen_url: form.imagen_url,
       })
     } else {
       await createInsumo({
         nombre: form.nombre.trim(),
         categoria: form.categoria,
         unidad_medida: form.unidad_medida,
-        costo_unitario: form.costo_unitario,
+        precio_compra: form.precio_compra,
+        contenido_por_unidad: form.contenido_por_unidad,
         stock_inicial: form.stock_inicial,
         stock_minimo: form.stock_minimo,
-        cantidad_por_unidad: form.cantidad_por_unidad,
         proveedor_principal_id: form.proveedor_principal_id || null,
+        imagen_url: form.imagen_url,
       })
     }
     emit('saved')
@@ -171,10 +218,49 @@ async function handleSubmit() {
     @close="emit('close')"
   >
     <form class="space-y-5" @submit.prevent="handleSubmit">
+      <!-- Image upload -->
+      <div>
+        <label class="text-[13px] font-medium text-brand-950 mb-2 block">Imagen del producto</label>
+        <div
+          class="relative w-full aspect-[16/9] rounded-xl border-2 border-dashed border-sand-200 overflow-hidden bg-sand-50 flex items-center justify-center cursor-pointer hover:border-neon-pink/40 transition-colors"
+          @click="fileInput?.click()"
+        >
+          <img
+            v-if="form.imagen_url"
+            :src="form.imagen_url"
+            alt="Preview"
+            class="w-full h-full object-cover"
+          />
+          <div v-else class="text-center p-4">
+            <Icon name="lucide:image-plus" class="w-8 h-8 text-sand-300 mx-auto mb-2" />
+            <p class="text-[12px] text-sand-400">Click para subir imagen</p>
+            <p class="text-[11px] text-sand-300 mt-1">JPG, PNG o WebP</p>
+          </div>
+          <div v-if="isUploading" class="absolute inset-0 bg-white/80 flex items-center justify-center">
+            <Icon name="lucide:loader-2" class="w-6 h-6 text-neon-pink animate-spin" />
+          </div>
+        </div>
+        <input
+          ref="fileInput"
+          type="file"
+          accept="image/*"
+          class="hidden"
+          @change="handleImageUpload"
+        />
+        <button
+          v-if="form.imagen_url"
+          type="button"
+          class="mt-2 text-[12px] text-danger hover:text-danger/80 font-medium transition-colors"
+          @click="removeImage"
+        >
+          Eliminar imagen
+        </button>
+      </div>
+
       <AppInput
         v-model="form.nombre"
         label="Nombre *"
-        placeholder="Ej: Azúcar flor"
+        placeholder="Ej: Helado de limón, Azúcar flor..."
         :error="errors.nombre"
         :disabled="isSaving"
       />
@@ -194,45 +280,47 @@ async function handleSubmit() {
       />
 
       <AppInput
-        v-model="form.costo_unitario"
-        label="Costo unitario"
+        v-model="form.contenido_por_unidad"
+        :label="contenidoLabel + ' *'"
         type="number"
-        :error="errors.costo_unitario"
+        :helper="contenidoHelper"
+        :error="errors.contenido_por_unidad"
+        :disabled="isSaving"
+      />
+
+      <AppInput
+        v-model="form.precio_compra"
+        label="Precio de compra *"
+        type="number"
+        placeholder="Precio total del envase/paquete"
+        :error="errors.precio_compra"
         :disabled="isSaving"
       />
 
       <AppInput
         v-if="!isEditing"
         v-model="form.stock_inicial"
-        label="Stock inicial"
+        label="Cantidad de envases comprados"
         type="number"
-        helper="Se registrará como movimiento de tipo ajuste"
-        :error="errors.stock_inicial"
+        placeholder="Ej: 1 balde, 3 paquetes..."
+        helper="Se multiplicará por el contenido para calcular el stock en la unidad base"
         :disabled="isSaving"
       />
 
       <AppInput
         v-model="form.stock_minimo"
-        label="Stock mínimo"
+        label="Stock mínimo (en unidad base)"
         type="number"
+        :placeholder="`Ej: 5 ${unidadLabel}`"
+        :helper="`Mínimo que necesitás en ${unidadLabel} antes de reponer`"
         :error="errors.stock_minimo"
         :disabled="isSaving"
       />
 
-      <div class="space-y-1">
-        <AppInput
-          v-model="form.cantidad_por_unidad"
-          :label="cantidadLabel"
-          type="number"
-          :helper="cantidadHelper"
-          :disabled="isSaving"
-        />
-      </div>
-
-      <div v-if="form.cantidad_por_unidad && form.costo_unitario && form.cantidad_por_unidad > 0" class="bg-sand-50 rounded-xl p-3">
-        <p class="text-[12px] text-sand-400">Costo por {{ form.unidad_medida }}</p>
+      <div v-if="costoPorUnidad > 0" class="bg-sand-50 rounded-xl p-3">
+        <p class="text-[12px] text-sand-400">Costo por {{ unidadLabel }}</p>
         <p class="text-[16px] font-semibold text-brand-950">
-          ${{ (form.costo_unitario / form.cantidad_por_unidad).toFixed(2) }}/{{ form.unidad_medida }}
+          ${{ costoPorUnidad.toLocaleString('es-AR', { maximumFractionDigits: 2 }) }}/{{ unidadLabel }}
         </p>
       </div>
 
@@ -240,7 +328,7 @@ async function handleSubmit() {
         <label class="text-sm font-medium text-brand-950">Activo</label>
         <button
           type="button"
-          :class="form.activo ? 'bg-brand-600' : 'bg-sand-200'"
+          :class="form.activo ? 'bg-neon-pink' : 'bg-sand-200'"
           class="relative w-10 h-6 rounded-full transition-colors"
           @click="form.activo = !form.activo"
         >

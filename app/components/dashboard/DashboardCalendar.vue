@@ -79,7 +79,7 @@ function nextMonth() {
 
 <template>
   <div class="bg-white rounded-2xl border border-sand-200/60 shadow-card overflow-hidden">
-    <div class="px-4 py-3 border-b border-sand-200/40">
+    <div class="px-5 py-4 border-b border-sand-200/30">
       <div class="flex items-center justify-between">
         <h3 class="text-[12px] font-bold text-brand-950 tracking-tight">{{ monthNames[currentMonth] }}, {{ currentYear }}</h3>
         <div class="flex items-center gap-1">
@@ -99,7 +99,7 @@ function nextMonth() {
       </div>
     </div>
 
-    <div class="p-3">
+    <div class="p-4">
       <!-- Day headers -->
       <div class="grid grid-cols-7 mb-2">
         <div

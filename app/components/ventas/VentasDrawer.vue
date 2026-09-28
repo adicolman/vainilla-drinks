@@ -10,7 +10,7 @@ const emit = defineEmits<{
   saved: []
 }>()
 
-const { createVenta, fetchRecetas, recetas } = useVentas()
+const { createVenta, fetchRecetas, recetas, calcularCostoReceta } = useVentas()
 
 const items = ref<VentaItemForm[]>([])
 const medioPago = ref('efectivo')
@@ -40,12 +40,7 @@ function formatCurrency(n: number) {
 
 function calcularCosto(recetaId: string): number {
   const receta = recetas.value.find(r => r.id === recetaId)
-  if (!receta?.receta_ingredientes?.length) return 0
-  return receta.receta_ingredientes.reduce((sum, ing) => {
-    const costo = Number(ing.insumo?.costo_promedio || 0)
-    const cantidad = Number(ing.cantidad_para_1_litro || 0)
-    return sum + (costo * cantidad)
-  }, 0)
+  return receta ? calcularCostoReceta(receta) : 0
 }
 
 function handleRecetaSelect(idx: number) {
@@ -136,7 +131,7 @@ async function handleSubmit() {
           <label class="text-sm font-medium text-brand-950">Productos vendidos</label>
           <button
             type="button"
-            class="text-[12px] text-brand-600 hover:text-brand-950 font-medium transition-colors"
+            class="text-[12px] text-neon-pink hover:text-neon-pink/80 font-medium transition-colors"
             @click="addItem"
           >
             + Agregar producto

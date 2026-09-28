@@ -31,14 +31,30 @@ const trendBg = computed(() => {
   if (props.trend === 'down') return props.label === 'Gastos' ? 'bg-success-soft' : 'bg-danger-soft'
   return 'bg-sand-100'
 })
+
+const iconBg = computed(() => {
+  const label = props.label.toLowerCase()
+  if (label.includes('venta')) return 'bg-neon-pink/10'
+  if (label.includes('compra')) return 'bg-neon-cyan/10'
+  if (label.includes('caja') || label.includes('saldo')) return 'bg-neon-purple/10'
+  return 'bg-sand-100'
+})
+
+const iconColor = computed(() => {
+  const label = props.label.toLowerCase()
+  if (label.includes('venta')) return 'text-neon-pink'
+  if (label.includes('compra')) return 'text-neon-cyan'
+  if (label.includes('caja') || label.includes('saldo')) return 'text-neon-purple'
+  return 'text-brand-600'
+})
 </script>
 
 <template>
-  <div class="bg-white rounded-2xl border border-sand-200/60 p-6 shadow-card hover:shadow-elevated transition-shadow duration-300">
+  <div class="bg-white rounded-2xl border border-sand-200/60 p-5 shadow-card hover:shadow-neon-pink transition-shadow duration-300">
     <div class="flex items-start justify-between mb-4">
       <span class="text-[11px] font-semibold tracking-[0.15em] uppercase text-sand-400">{{ label }}</span>
-      <div class="w-10 h-10 rounded-xl bg-sand-100 flex items-center justify-center">
-        <Icon :name="icon" class="w-5 h-5 text-brand-600" />
+      <div :class="iconBg" class="w-10 h-10 rounded-xl flex items-center justify-center">
+        <Icon :name="icon" :class="iconColor" class="w-5 h-5" />
       </div>
     </div>
 
@@ -52,7 +68,7 @@ const trendBg = computed(() => {
     <div class="flex items-center gap-2">
       <span
         :class="[trendBg, trendColor]"
-        class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-semibold"
+        class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold"
       >
         <Icon
           :name="trend === 'up' ? 'lucide:arrow-up' : trend === 'down' ? 'lucide:arrow-down' : 'lucide:minus'"

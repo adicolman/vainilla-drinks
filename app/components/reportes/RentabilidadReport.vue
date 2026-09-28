@@ -72,13 +72,13 @@ const menosRentable = computed(() => recetasConMargen.value[recetasConMargen.val
 </script>
 
 <template>
-  <div class="space-y-6">
+  <div class="space-y-7">
     <!-- Loading -->
     <LoadingState v-if="isLoading" type="card" />
 
     <template v-else>
       <!-- Resumen financiero real -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
         <div class="bg-white rounded-2xl border border-sand-200/60 p-5">
           <p class="text-[11px] text-sand-300 uppercase tracking-wider font-medium">Total ventas</p>
           <p class="text-[22px] font-bold text-success mt-1">{{ formatCurrency(totalVentas) }}</p>
@@ -106,7 +106,7 @@ const menosRentable = computed(() => recetasConMargen.value[recetasConMargen.val
       </div>
 
       <!-- Margen por receta (teórico) -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
         <div class="bg-white rounded-2xl border border-sand-200/60 p-5">
           <p class="text-[11px] text-sand-300 uppercase tracking-wider font-medium">Margen promedio (teórico)</p>
           <p class="text-[22px] font-bold text-brand-950 mt-1">{{ formatPercent(margenPromedio) }}</p>
@@ -127,7 +127,7 @@ const menosRentable = computed(() => recetasConMargen.value[recetasConMargen.val
 
       <!-- Tabla de recetas -->
       <div class="bg-white rounded-2xl border border-sand-200/60 overflow-hidden">
-        <div class="px-5 py-4 border-b border-sand-100">
+        <div class="px-5 py-4 border-b border-sand-200/30">
           <h3 class="text-[14px] font-semibold text-brand-950">Rentabilidad por receta (teórica)</h3>
         </div>
         <div class="overflow-x-auto">

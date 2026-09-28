@@ -35,39 +35,31 @@ const categoriaVariant: Record<string, string> = {
   otros: 'default',
 }
 
-const medioPagoLabel: Record<string, string> = {
-  efectivo: 'Efectivo',
-  transferencia: 'Transferencia',
-  tarjeta: 'Tarjeta',
-  mp: 'Mercado Pago',
-}
+const emit = defineEmits<{
+  edit: [gasto: GastoRow]
+}>()
 </script>
 
 <template>
-  <div class="bg-white rounded-2xl border border-sand-200/60 p-5 hover:shadow-card transition-all duration-200">
-    <div class="flex items-start justify-between mb-3">
-      <div class="flex-1 min-w-0">
-        <h3 class="text-[15px] font-semibold text-brand-950 truncate">
-          {{ gasto.concepto || 'Sin concepto' }}
-        </h3>
-        <p class="text-[12px] text-sand-400 mt-0.5">{{ formatDate(gasto.fecha) }}</p>
+  <div
+    class="bg-white rounded-2xl border border-sand-200/60 overflow-hidden hover:shadow-elevated transition-all duration-200 flex flex-col cursor-pointer group"
+    @click="emit('edit', gasto)"
+  >
+    <div class="h-1 bg-danger" />
+    <div class="px-5 pt-4 pb-4 flex items-start justify-between gap-3">
+      <div class="flex gap-3 min-w-0">
+        <div class="w-10 h-10 rounded-xl bg-danger text-white flex items-center justify-center shrink-0">
+          <Icon name="lucide:receipt" class="w-[18px] h-[18px]" />
+        </div>
+        <div class="min-w-0">
+          <h3 class="text-[14px] font-semibold text-brand-950 leading-tight truncate">{{ gasto.concepto || 'Sin concepto' }}</h3>
+          <p class="text-[11px] text-sand-400 mt-0.5">{{ formatDate(gasto.fecha) }}</p>
+        </div>
       </div>
-      <span class="text-[18px] font-bold text-danger">
-        −{{ formatCurrency(gasto.monto) }}
-      </span>
+      <span class="text-[15px] font-bold text-danger shrink-0">-{{ formatCurrency(gasto.monto) }}</span>
     </div>
-
-    <div class="flex items-center gap-2 mb-3">
-      <StatusBadge
-        :label="categoriaLabels[gasto.categoria] || gasto.categoria"
-        :variant="(categoriaVariant[gasto.categoria] || 'default') as any"
-      />
-      <span class="text-[12px] text-sand-400">·</span>
-      <span class="text-[12px] text-sand-400">{{ medioPagoLabel[gasto.medio_pago] || gasto.medio_pago }}</span>
+    <div class="px-5 pb-4 flex items-center gap-2">
+      <StatusBadge :label="categoriaLabels[gasto.categoria] || gasto.categoria" :variant="(categoriaVariant[gasto.categoria] || 'default') as any" />
     </div>
-
-    <p v-if="gasto.descripcion" class="text-[12px] text-sand-400 truncate">
-      {{ gasto.descripcion }}
-    </p>
   </div>
 </template>

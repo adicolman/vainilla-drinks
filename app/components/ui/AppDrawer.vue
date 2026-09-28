@@ -33,16 +33,16 @@ onUnmounted(() => {
         <div class="absolute inset-0 bg-brand-950/40 backdrop-blur-sm" @click="onBackdropClick" />
         <div
           :class="side === 'left' ? 'left-0' : 'right-0'"
-          class="absolute inset-y-0 w-full max-w-md bg-white shadow-elevated border-sand-200/60 flex flex-col border-l"
+          class="absolute inset-y-0 w-full max-w-md bg-white shadow-elevated flex flex-col border-l border-sand-200/60"
         >
-          <div v-if="title" class="flex items-center justify-between px-6 py-4 border-b border-sand-200/40">
+          <div v-if="title" class="flex items-center justify-between px-6 py-4 border-b border-sand-200/30">
             <h2 class="text-lg font-semibold text-brand-950">{{ title }}</h2>
             <IconButton icon="lucide:x" size="sm" @click="emit('close')" />
           </div>
           <div class="flex-1 overflow-auto p-6">
             <slot />
           </div>
-          <div v-if="$slots.footer" class="px-6 py-4 border-t border-sand-200/40 bg-sand-50/60">
+          <div v-if="$slots.footer" class="px-6 py-4 border-t border-sand-200/30 bg-sand-50/60">
             <slot name="footer" />
           </div>
         </div>

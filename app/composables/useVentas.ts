@@ -103,9 +103,13 @@ export function useVentas() {
   function calcularCostoReceta(receta: RecetaConCosto): number {
     if (!receta.receta_ingredientes?.length) return 0
     return receta.receta_ingredientes.reduce((sum, ing) => {
+      if (ing.es_nota) return sum
       const costo = Number(ing.insumo?.costo_promedio || 0)
       const cantidad = Number(ing.cantidad_para_1_litro || 0)
-      return sum + (costo * cantidad)
+      const factor = (ing.unidad_receta && Number(ing.factor_conversion) > 0)
+        ? Number(ing.factor_conversion)
+        : 1
+      return sum + (costo * cantidad * factor)
     }, 0)
   }
 
@@ -154,7 +158,8 @@ export function useVentas() {
 
     if (!newVenta) throw new Error('No se pudo crear la venta')
 
-    // Insert items
+    // Insert items + descuento de stock de los insumos
+    let stockError: string | null = null
     for (const item of itemsConCosto) {
       const itemData: VentaItemInsert = {
         venta_id: newVenta.id,
@@ -167,6 +172,17 @@ export function useVentas() {
       }
 
       await client.from('venta_items').insert(itemData)
+
+      if (!stockError) {
+        const { error } = await client.rpc('registrar_stock_por_venta', {
+          p_organization_id: profile.value.organization_id,
+          p_usuario_id: profile.value.id,
+          p_venta_id: newVenta.id,
+          p_receta_id: item.receta_id,
+          p_cantidad_vendida: item.cantidad,
+        })
+        if (error) stockError = error.message
+      }
     }
 
     // Link to caja: insert ingreso
@@ -188,6 +204,10 @@ export function useVentas() {
     }
 
     await client.from('movimientos_caja').insert(cajaData)
+
+    if (stockError) {
+      addToast('warning', 'Venta creada, pero no se descontó el stock', stockError)
+    }
 
     addToast('success', 'Venta registrada', `$${totalVenta.toLocaleString('es-AR')}`)
     await fetchVentas()
@@ -218,6 +238,7 @@ export function useVentas() {
     filteredVentas,
     fetchVentas,
     fetchRecetas,
+    calcularCostoReceta,
     createVenta,
     updateVentaEstado,
   }

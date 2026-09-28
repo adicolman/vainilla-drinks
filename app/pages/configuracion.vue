@@ -101,7 +101,7 @@ const isAdmin = computed(() => profile.value?.rol === 'admin')
 
 <template>
   <div>
-    <div class="space-y-6">
+    <div class="space-y-7">
       <div class="flex items-center justify-between">
         <div>
           <h1 class="text-[22px] font-bold text-brand-950 tracking-tight">Configuración</h1>
@@ -110,7 +110,7 @@ const isAdmin = computed(() => profile.value?.rol === 'admin')
       </div>
 
       <!-- Tabs -->
-      <div class="border-b border-sand-200/60">
+      <div class="border-b border-sand-200/30">
         <div class="flex gap-6">
           <button
             v-for="tab in tabs"
@@ -160,7 +160,7 @@ const isAdmin = computed(() => profile.value?.rol === 'admin')
         <div
           v-for="cat in filteredCategorias"
           :key="cat.id"
-          class="flex items-center justify-between bg-white rounded-xl border border-sand-200/60 px-4 py-3 hover:shadow-card transition-all duration-200"
+          class="flex items-center justify-between bg-white rounded-lg border border-sand-200/60 px-4 py-3 hover:shadow-card transition-all duration-200"
         >
           <div class="flex items-center gap-3">
             <div
